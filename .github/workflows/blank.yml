@@ -15,3 +15,15 @@ jobs:
       - uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
+
+          
+          # Options
+          user: Amxgh
+          template: classic
+          base: header, activity, community, repositories, metadata
+          config_timezone: AEST
+          plugin_habits: yes
+          plugin_habits_days: 14
+          plugin_habits_facts: yes
+          plugin_habits_from: 200
+          plugin_lines: yes
