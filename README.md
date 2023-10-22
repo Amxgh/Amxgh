@@ -1,16 +1,15 @@
-### Hi there 👋
+# Hello, I'm Amogh! 👋
 
-<!--
-**Amxgh/Amxgh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+<img src="github-metrics.svg" alt="Amogh's Metrics" style="width:800px;"/>
 
-Here are some ideas to get you started:
+<div style="display: flex; flex-direction: row; align-items: center;">
+  <div style="display: flex; flex-direction: column;">
+    <a href="https://github.com/MiscGuild/discord">
+      <img height=200 align="" src="https://github-readme-stats.vercel.app/api/pin/?username=MiscGuild&repo=discord&theme=transparent&hide_border=true" style="width: 400px;" />
+    </a>
+    <a href="https://github.com/MiscGuild/PlayerRecruiter">
+      <img height=200 align="wrap" src="https://github-readme-stats.vercel.app/api/pin/?username=MiscGuild&repo=PlayerRecruiter&theme=transparent&hide_border=true" style="width: 400px;" />
+    </a>
+  </div>
+</div>
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
