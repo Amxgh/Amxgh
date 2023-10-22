@@ -21,9 +21,10 @@ jobs:
           user: Amxgh
           template: classic
           base: header, activity, community, repositories, metadata
+          repositories_affiliations: owner,collaborator,organization_member
           config_timezone: AEST
           plugin_habits: yes
-          plugin_habits_days: 14
-          plugin_habits_facts: yes
-          plugin_habits_from: 200
+          plugin_habits_days: 30
+          plugin_habits_from: 1000
           plugin_lines: yes
+          plugin_notable: yes
