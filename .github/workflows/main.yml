@@ -33,15 +33,12 @@ jobs:
           repositories_affiliations: owner, organization_member
           config_timezone: AEST
           
-          # --- Popular Plugins ---
-
-          # # 💡 Coding Habits Plugin (From original)
-          # plugin_habits: yes
-          # plugin_habits_days: 30
-          # plugin_habits_from: 1000
-          
-          # 👨‍💻 Lines of Code Plugin (From original)
+          # Lines of code plugin (more reliable)
           plugin_lines: yes
+          plugin_lines_delay: 30        # retry after 30s to avoid zero/incorrect diffs
+          plugin_lines_sections: repositories, history
+          # plugin_lines_history_limit: 1 # show last 1 year; raise if you want more history
+
           
           
           # 🈷️ Most Used Languages Plugin
