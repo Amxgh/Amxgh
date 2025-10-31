@@ -46,10 +46,15 @@ jobs:
           # 🎩 Notable Contributions Plugin (From original)
           plugin_notable: yes
           
-          # 📌 Starred Topics Plugin (REPLACING ISOCALENDAR)
-          plugin_topics: yes
-          plugin_topics_limit: 15
-          plugin_topics_mode: icons
+          plugin_skyline: yes
+          plugin_skyline_year: all 
+          # Shows the full last 365 days
+          plugin_skyline_perspective: flat 
+          # Renders the calendar in a simple 2D view
+          plugin_skyline_quality: 10 
+          # Adjusts image quality (optional)
+          plugin_skyline_frames: 1 
+          # Ensures it generates a static image (not an animated GIF)
           
           # 🈷️ Most Used Languages Plugin
           plugin_languages: yes
@@ -58,5 +63,6 @@ jobs:
           plugin_languages_threshold: 0% # Display even small percentages
           plugin_languages_colors: github # Use GitHub's standard language colors
           # Optional: Ignore specific languages like config/markup files
-          plugin_languages_ignored: html, css, scss, markdown
+
+
 
