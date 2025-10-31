@@ -1,6 +1,6 @@
 name: Metrics
 on:
-  # Schedule daily updates
+  # Schedule daily updates at 00:00 UTC
   schedule: [{cron: "0 0 * * *"}]
   # (optional) Run workflow manually
   workflow_dispatch:
@@ -10,21 +10,65 @@ jobs:
   github-metrics:
     runs-on: ubuntu-latest
     permissions:
+      # Required to write the metrics SVG file to the repository
       contents: write
     steps:
       - uses: lowlighter/metrics@latest
         with:
+          # Your GitHub Personal Access Token (PAT)
           token: ${{ secrets.METRICS_TOKEN }}
 
-          
-          # Options
+          # Core Options
           user: Amxgh
           template: classic
+          # Add base_indepth to enable more detailed stats for core sections
           base: header, activity, community, repositories, metadata
+          base_indepth: yes
+          
+          # Output configuration
+          # It's good practice to specify the output path (default is github-metrics.svg)
+          output: assets/github-metrics.svg
+
+          # Timezone and Commit Filtering (from original)
           repositories_affiliations: owner, organization_member
           config_timezone: AEST
-          plugin_habits: yes
-          plugin_habits_days: 30
-          plugin_habits_from: 1000
+          
+          # --- Popular Plugins ---
+
+          # # 💡 Coding Habits Plugin (From original)
+          # plugin_habits: yes
+          # plugin_habits_days: 30
+          # plugin_habits_from: 1000
+          
+          # 👨‍💻 Lines of Code Plugin (From original)
           plugin_lines: yes
+          
+          # 🎩 Notable Contributions Plugin (From original)
           plugin_notable: yes
+
+          # 📅 Isometric Commit Calendar Plugin
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year # Can also be 'half-year'
+          plugin_isocalendar_background: 44475a # Custom background color (optional)
+
+          # 🈷️ Most Used Languages Plugin
+          plugin_languages: yes
+          # Options to fine-tune language display
+          plugin_languages_limit: 8
+          plugin_languages_threshold: 0% # Display even small percentages
+          plugin_languages_colors: github # Use GitHub's standard language colors
+          # Optional: Ignore specific languages like config/markup files
+          plugin_languages_ignored: html, css, scss, markdown
+
+          # 🏆 Achievements Plugin (Displays badges like stars, sponsors, etc.)
+          plugin_achievements: yes
+          plugin_achievements_threshold: C # Threshold for what is considered an achievement
+          plugin_achievements_limit: 4 # Max number of achievements to display
+
+          # 🌟 Recently Starred Repositories Plugin
+          plugin_stars: yes
+          plugin_stars_limit: 5 # Show up to 5 recently starred repos
+
+          # 💬 Follow-up Plugin (For issues/PRs needing attention)
+          plugin_followup: yes
+          plugin_followup_limit: 5
