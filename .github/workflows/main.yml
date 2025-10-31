@@ -36,7 +36,7 @@ jobs:
           # Lines of code plugin (more reliable)
           plugin_lines: yes
           plugin_lines_delay: 30        # retry after 30s to avoid zero/incorrect diffs
-          plugin_lines_sections: repositories, history
+          plugin_lines_sections: repositories
           # plugin_lines_history_limit: 1 # show last 1 year; raise if you want more history
 
           
