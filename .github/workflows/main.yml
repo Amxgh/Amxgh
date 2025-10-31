@@ -45,12 +45,12 @@ jobs:
           
           # 🎩 Notable Contributions Plugin (From original)
           plugin_notable: yes
-
-          # 📅 Isometric Commit Calendar Plugin
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year # Can also be 'half-year'
-          plugin_isocalendar_background: 44475a # Custom background color (optional)
-
+          
+          # 📌 Starred Topics Plugin (REPLACING ISOCALENDAR)
+          plugin_topics: yes
+          plugin_topics_limit: 15
+          plugin_topics_mode: icons
+          
           # 🈷️ Most Used Languages Plugin
           plugin_languages: yes
           # Options to fine-tune language display
@@ -60,15 +60,3 @@ jobs:
           # Optional: Ignore specific languages like config/markup files
           plugin_languages_ignored: html, css, scss, markdown
 
-          # 🏆 Achievements Plugin (Displays badges like stars, sponsors, etc.)
-          plugin_achievements: yes
-          plugin_achievements_threshold: C # Threshold for what is considered an achievement
-          plugin_achievements_limit: 4 # Max number of achievements to display
-
-          # 🌟 Recently Starred Repositories Plugin
-          plugin_stars: yes
-          plugin_stars_limit: 5 # Show up to 5 recently starred repos
-
-          # 💬 Follow-up Plugin (For issues/PRs needing attention)
-          plugin_followup: yes
-          plugin_followup_limit: 5
