@@ -34,15 +34,15 @@
                                     <rect class="day" x="15" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="30" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="45" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="60" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="75" y="0" width="11" height="11" fill="#40c463" rx="2" ry="2"/>
+                                    <rect class="day" x="60" y="0" width="11" height="11" fill="#40c463" rx="2" ry="2"/>
+                                    <rect class="day" x="75" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="90" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="105" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
+                                    <rect class="day" x="105" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
                                     <rect class="day" x="120" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
-                                    <rect class="day" x="135" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
-                                    <rect class="day" x="150" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
+                                    <rect class="day" x="135" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
+                                    <rect class="day" x="150" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="165" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="180" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
+                                    <rect class="day" x="180" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
                                     <rect class="day" x="195" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                 </g>
                             </svg>
@@ -69,7 +69,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            2174 Commits
+                            2179 Commits
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -217,7 +217,13 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM4 8a4 4 0 118 0 4 4 0 01-8 0z"/>
                             </svg>
-                            <span class="diff-handle">Amxgh/MachineLearningTextClassification</span>
+                            <span class="diff-handle">MiscGuild/bridge</span>
+                        </div>
+                        <div class="field">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM4 8a4 4 0 118 0 4 4 0 01-8 0z"/>
+                            </svg>
+                            <span class="diff-handle">MiscGuild/PlayerRecruiter</span>
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -229,13 +235,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM4 8a4 4 0 118 0 4 4 0 01-8 0z"/>
                             </svg>
-                            <span class="diff-handle">WakeyWakeyx/MobileApp</span>
-                        </div>
-                        <div class="field">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM4 8a4 4 0 118 0 4 4 0 01-8 0z"/>
-                            </svg>
-                            <span class="diff-handle">MiscGuild/website</span>
+                            <span class="diff-handle">WakeyWakeyx/BackendAPI</span>
                         </div>
                     </section>
                     <section>
@@ -243,11 +243,23 @@
                             <div class="diff-box added"></div>
                             <div class="diff-box added"></div>
                             <div class="diff-box added"></div>
-                            <div class="diff-box added"></div>
+                            <div class="diff-box deleted"></div>
                             <div class="diff-box deleted"></div>
                             <div class="diff-stats">
-                                <span class="added"> +23.7k</span>
-                                <span class="deleted">     -3</span>
+                                <span class="added"> +2.52m</span>
+                                <span class="deleted"> -2.52m</span>
+                            </div>
+                            <span> </span>
+                        </div>
+                        <div class="field">
+                            <div class="diff-box added"></div>
+                            <div class="diff-box added"></div>
+                            <div class="diff-box added"></div>
+                            <div class="diff-box deleted"></div>
+                            <div class="diff-box deleted"></div>
+                            <div class="diff-stats">
+                                <span class="added"> +5.05k</span>
+                                <span class="deleted"> -3.69k</span>
                             </div>
                             <span> </span>
                         </div>
@@ -267,23 +279,11 @@
                             <div class="diff-box added"></div>
                             <div class="diff-box added"></div>
                             <div class="diff-box added"></div>
-                            <div class="diff-box deleted"></div>
-                            <div class="diff-box deleted"></div>
-                            <div class="diff-stats">
-                                <span class="added"> +3.44k</span>
-                                <span class="deleted">   -907</span>
-                            </div>
-                            <span> </span>
-                        </div>
-                        <div class="field">
-                            <div class="diff-box added"></div>
-                            <div class="diff-box added"></div>
-                            <div class="diff-box added"></div>
                             <div class="diff-box added"></div>
                             <div class="diff-box deleted"></div>
                             <div class="diff-stats">
-                                <span class="added">    +4k</span>
-                                <span class="deleted">   -230</span>
+                                <span class="added"> +3.68k</span>
+                                <span class="deleted">   -873</span>
                             </div>
                             <span> </span>
                         </div>
@@ -305,14 +305,14 @@
                         <rect x="0" y="0" width="460" height="8" fill="white" rx="5"/>
                     </mask>
                     <rect mask="url(#languages-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                    <rect mask="url(#languages-bar)" x="0" y="0" width="342.0220143221947" height="8" fill="#3771a1"/>
-                    <rect mask="url(#languages-bar)" x="342.0220143221947" y="0" width="24.99316689183385" height="8" fill="#3178c6"/>
-                    <rect mask="url(#languages-bar)" x="367.0151812140286" y="0" width="24.790204056133007" height="8" fill="#e34c26"/>
-                    <rect mask="url(#languages-bar)" x="391.8053852701616" y="0" width="24.343416397897744" height="8" fill="#178600"/>
-                    <rect mask="url(#languages-bar)" x="416.1488016680593" y="0" width="22.18626271934277" height="8" fill="#F05138"/>
-                    <rect mask="url(#languages-bar)" x="438.3350643874021" y="0" width="18.740384840651917" height="8" fill="#555555"/>
-                    <rect mask="url(#languages-bar)" x="457.075449228054" y="0" width="1.5734110095038774" height="8" fill="#f1e05a"/>
-                    <rect mask="url(#languages-bar)" x="458.64886023755787" y="0" width="1.3511397624421138" height="8" fill="#663399"/>
+                    <rect mask="url(#languages-bar)" x="0" y="0" width="341.58925422267504" height="8" fill="#3771a1"/>
+                    <rect mask="url(#languages-bar)" x="341.58925422267504" y="0" width="25.08484539718619" height="8" fill="#3178c6"/>
+                    <rect mask="url(#languages-bar)" x="366.67409961986124" y="0" width="24.88113806481953" height="8" fill="#e34c26"/>
+                    <rect mask="url(#languages-bar)" x="391.5552376846808" y="0" width="24.432711525649566" height="8" fill="#178600"/>
+                    <rect mask="url(#languages-bar)" x="415.9879492103303" y="0" width="22.267645099345533" height="8" fill="#F05138"/>
+                    <rect mask="url(#languages-bar)" x="438.25559430967587" y="0" width="18.809127248501" height="8" fill="#555555"/>
+                    <rect mask="url(#languages-bar)" x="457.06472155817687" y="0" width="1.57918250578046" height="8" fill="#f1e05a"/>
+                    <rect mask="url(#languages-bar)" x="458.6439040639573" y="0" width="1.3560959360426381" height="8" fill="#663399"/>
                 </svg>
                 <div class="field center horizontal-wrap fill-width">
                     <div class="field center no-wrap language">
@@ -367,7 +367,7 @@
             </section>
             <footer>
                 <span>These metrics do not include all private contributions</span>
-                <span>Last updated 22 Mar 2026, 01:00:49  with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 23 Mar 2026, 01:02:44  with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
