@@ -2,6 +2,7 @@
 
 [profile]
 timezone = "America/New_York"   # decides what "today" and "this month" mean on the card
+location = [42.36, -71.06]      # latitude, longitude: sunset splits day (latte) from night (red bull / beer)
 output_dir = "assets"
 
 [privacy]
