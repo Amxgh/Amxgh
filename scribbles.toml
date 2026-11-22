@@ -1,0 +1,532 @@
+# Everything the handwritten scribbles on the metrics card say.
+#
+# Each [section] is one spot on the card. Its lines are split into groups, and the
+# comment above each group says when that group is used, e.g. only when last month
+# had commits. Every run picks a new line from the groups that apply, so add or
+# delete lines freely; a line only comes back once every other line in its pool has
+# had a turn. Lines too long for their spot are skipped when the card is drawn.
+#
+# An empty group ( always = [] ) or a deleted one adds no lines; the section's other
+# groups still apply. To switch a whole spot off but keep its lines for later, put
+#     off = true
+# right under its [section] heading. If none of a spot's groups have a line that
+# applies, that spot gets no scribble.
+#
+#   {name}           fills in a value. Each section lists the names it has. Counts
+#                    print with commas (1,234).
+#   {name:one|many}  picks the word that agrees with a count:
+#                    "{stars} {stars:star|stars}" gives "1 star" or "7 stars".
+#                    Inside it, # is the number: "the other {n:one|#}".
+#   {{ and }}        a literal { or }.
+#
+# Plain ASCII only (no emoji, curly quotes or accents): the handwriting font only
+# has ASCII, so other lines are skipped. A mistake in a line (an unknown {name}, or a
+# group name the code doesn't know) skips just that line or group, with a warning in
+# the workflow log.
+
+
+# ---- Beside the all-time commit count; the arrow points at "commits since" ----------
+# A line is a string, or ["first line", "second line"] to split it over two lines.
+#
+# {commits}        all-time commits        {year}           this year, e.g. 2026
+# {fixes}          commits that say "fix"  {non_fixes}      the commits that don't
+# {this_year}      commits this year       {this_year_pct}  their share of all commits
+# {night_pct}      % made after sunset     {active_days}    days with a commit
+# {per_day}        commits per coding day  {streak}         longest run of days in a row
+# {added}          lines added (12.9K)     {deleted}        lines deleted (12.9K)
+# {net}            added minus deleted (12.9K)
+[hero]
+always = [
+    "W git log",
+    ["all of them", "were absolutely necessary"],
+    ["ask me about", "literally any of them"],
+    ["some of them", "even have tests"],
+    ["every one of them", "pushed with hope"],
+    ["a few of them", "were on purpose"],
+    ["and i'd do it", "all again"],
+    ["fueled by lattes,", "red bull zero and heineken"],
+    ["headphones on.", "music off. locked in."],
+    ["the easy ones were", "written to kiss land"],
+    ["each one worth", "a cold heineken"],
+    "hold my beer",
+    ["iced sf vanilla", "protein latte. always."],
+    ["4 sf vanilla, 4 sf caramel,", "3 long shots"],
+]
+# a quarter or more of all commits came after sunset
+night_owl = [
+    ["{night_pct}% of them after sunset,", "from bed"],
+    ["{night_pct}% written in bed.", "the rest on campus"],
+]
+# there's at least one commit
+coding_days = [
+    ["{active_days} days of this.", "and counting"],
+]
+# 4 or more commits per coding day on average
+busy_days = [
+    ["~{per_day} per coding day.", "LOCKED IN"],
+]
+# some commits, but not all of them, say "fix"
+fixes = [
+    ["{fixes} of them", "{fixes:fixes|fix} the other {non_fixes}"],
+    ['{fixes} of them {fixes:says|say} "fix"', "the rest are lying"],
+    ["{fixes} {fixes:fix|fixes},", "{non_fixes} future bugs"],
+    ["{fixes} {fixes:says|say} fix.", "the rest will, eventually"],
+    ["{fixes} {fixes:fix|fixes}.", "for very good reasons"],
+]
+# some commits, but not all of them, are from this year
+this_year = [
+    ["{this_year} of them", "{this_year:was|were} this year alone"],
+]
+# ...and this year has at least half of them
+mostly_this_year = [
+    ["{this_year_pct}% of them", "happened in {year}"],
+    ["{year} has been", "a lot"],
+]
+# any lines deleted
+deleted = [
+    ["deleted {deleted} lines.", "my finest work"],
+]
+# more lines added than deleted
+net_growth = [
+    ["net +{net} lines.", "the codebase grows"],
+]
+# a streak of 5 or more days in a row
+streak = [
+    ["best streak: {streak} days.", "then i slept for too long"],
+]
+
+
+# ---- Under this month's chart ---------------------------------------------------------
+# {commits}       commits this month         {month}         this month, e.g. November
+# {last_commits}  commits last month         {last_month}    last month, e.g. October
+# {today}         day of the month, e.g. 22  {today_nth}     the same as 22nd
+# {days_left}     days left in the month
+# {behind}        how many fewer than last month   {ahead}   how many more than last month
+[month]
+# no commits this month yet
+nothing_yet = [
+    "nothing yet. thinking very hard.",
+    "I think i overslept.",
+    "probably binging a new tv show",
+    "probably rewatching a tv show",
+    "out touching some grass",
+    "out having fun!",
+    "had a little too much fun watching an F1 race",
+    "day {today}. the keyboard is warming up.",
+]
+# no commits this month yet, and last month had some
+nothing_yet_vs_last_month = [
+    "{last_month} had {last_commits}. recovering.",
+    "{last_month} had {last_commits}. resting my fingers.",
+    "{last_month}: {last_commits}. {month}: loading...",
+]
+# already the biggest month ever, with days still to go
+record_so_far = [
+    "my biggest month ever. it's the {today_nth}.",
+    "personal record, and it's only the {today_nth}",
+    "new high score.",
+    "biggest month yet. {days_left} {days_left:day|days} to go.",
+    "all-time record.",
+    "record month. sleep schedule is in the bin.",
+    "best month ever.",
+    "record month. red bull zero stocks are low.",
+]
+# already the biggest month ever, with days still to go, and last month had commits
+record_so_far_vs_last_month = [
+    "{last_month} had {last_commits}.",
+]
+# the biggest month ever, on its last day
+record = [
+    "my biggest month ever.",
+    "record month.",
+    "new record.",
+    "record month.",
+]
+# fewer commits than last month so far
+behind_last_month = [
+    "{last_month} had {last_commits}. catching up.",
+    "{last_month} set the bar at {last_commits}. working on it.",
+]
+# already caught up with last month
+ahead_of_last_month = [
+    "already beat {last_month} ({last_commits}).",
+    "{last_month} had {last_commits}.",
+    "{ahead} ahead of {last_month}.",
+]
+# commits this month, none last month (and not a record)
+none_last_month = [
+    "first month on the board.",
+    "and so it begins.",
+    "off to a running start.",
+]
+
+
+# ---- Beside this month's best day in the chart (keep these short) ---------------------
+# {day}      the best day, e.g. 14th     {commits}  commits that day
+# {beer}     that day's beer, if there was one (heineken, usually)
+[best_day]
+# the best day is today
+today = [
+    "today. send help.",
+    "that's today.",
+    "today. it's not over.",
+]
+# the best day was earlier in the month
+earlier = [
+    "the {day}. long day.",
+    "the {day}. ruined my sleep schedule.",
+    "the {day}. deadlines were met.",
+    "the {day}. good times.",
+    "{commits} on the {day}. hm.",
+]
+# ...and it's the busiest day of all time
+all_time_record = [
+    "the {day}. all-time record.",
+    "the {day}. a new record.",
+]
+# ...and it was a weekend (so: beer, no caffeine)
+weekend = [
+    "the {day}. weekend. {beer}.",
+    "the {day}. zero caffeine.",
+]
+# ...and there was a latte
+latte = [
+    "the {day}. latte: yes.",
+]
+# ...and two red bulls that night
+two_red_bulls = [
+    "the {day}. 2 red bulls.",
+    "the {day}. two cans deep.",
+]
+# ...and a latte plus one red bull
+latte_and_red_bull = [
+    "the {day}. latte + red bull.",
+]
+# ...and one red bull, no latte
+red_bull = [
+    "the {day}. red bull zero.",
+]
+# ...and the work got finished, then a beer
+finished = [
+    "the {day}. then {beer}.",
+    "the {day}. done. {beer}.",
+]
+
+
+# ---- After "N pull requests opened, M merged" -----------------------------------------
+# {opened}  pull requests opened    {merged}      merged
+# {unmerged}  not merged            {merge_rate}  % merged
+[pull_requests]
+# every one merged
+all_merged = [
+    "every single one.",
+    "a perfect record. for now.",
+    "all merged. no notes.",
+    "100%. don't jinx it.",
+]
+# at most a fifth not merged
+mostly_merged = [
+    "we don't talk about the other {unmerged:one|#}",
+    "{unmerged} got away",
+    "{unmerged} still out there somewhere",
+    "{merge_rate}% merge rate. not bad.",
+]
+# more than a fifth not merged
+some_merged = [
+    "some were just for fun",
+    "the rest are still in review. forever.",
+]
+
+
+# ---- After "N commits in a single day" ------------------------------------------------
+# {commits}  commits on the busiest day ever
+[busiest]
+# 20 or more commits that day
+big_day = [
+    "i'm fine.",
+    "i'm fine. really.",
+    "don't ask.",
+    "never again. (lie)",
+    "deadlines were near.",
+    "hydration: redbull zero.",
+    "we don't talk about it.",
+    "two red bull zeros deep.",
+    "then one cold heineken.",
+]
+
+
+# ---- Under the facts: what I was drinking, worked out from when I committed ------------
+# The drinks rules live in metrics/fuel.py. The "latest coding day" groups only apply
+# if it was in the last week.
+#
+# {day}            the latest coding day ("today", "yesterday", "monday": see [fuel.names])
+# {night}          its night ("tonight", "last night", "monday night")
+# {beer}           that day's beer (heineken, usually)
+# {night_commits}  commits that night
+# {lattes} {red_bulls} {beers}  drinks so far this month
+# {pumps}          syrup pumps this month (lattes x pumps_per_latte)
+[fuel]
+pumps_per_latte = 8
+# the latest coding day was a weekend (beer, no caffeine)
+weekend = [
+    "{day}: {beer}. no caffeine on weekends.",
+    "{day}: weekend, so {beer}. that's the rule.",
+    "{night}: {beer}, a few commits, no caffeine.",
+]
+# the latest coding day (a weekday) had a latte
+latte = [
+    "{day}: one iced venti latte. never two.",
+    "{day}: on campus, iced latte in hand.",
+    "{day}: venti latte. 3 long shots. 8 pumps.",
+    "{day}: 4 vanilla, 4 caramel, all sugar free.",
+    "{day}: iced venti sugar free vanilla protein latte.",
+    "{day}: the usual. iced sf vanilla protein latte.",
+    "+4 sf caramel, +4 sf vanilla, 3 long shots. always.",
+]
+# ...two red bulls that night
+two_red_bulls = [
+    "{night}: two red bull zeros. stuff got built.",
+    "{night}: 2 red bull zeros, {night_commits} commits, from bed.",
+]
+# ...one red bull that night
+red_bull = [
+    "{night}: red bull zero. building mode.",
+    "{night}: red bull zero + {night_commits} commits from bed.",
+]
+# ...worked straight through until it was done, then a beer
+finished = [
+    "{night}: worked till it was done. then {beer}.",
+    "{day}: finished it. caffeine out, {beer} in.",
+    "{night}: shipped. cracked open a cold {beer}.",
+]
+# ...a night of fixing things, with a beer
+fixing = [
+    "{night}: bug fixes and a cold {beer}.",
+    "{night}: {beer} night. fixing and maintaining.",
+    "{night}: maintenance mode, {beer} in hand, in bed.",
+]
+# there were commits yesterday
+committed_yesterday = [
+    "committed yesterday, so: gym.",
+    "work done ahead of schedule. gym earned.",
+]
+# no commits yesterday
+day_off_yesterday = [
+    "no commits yesterday.",
+    "yesterday: fun",
+]
+# this month had beer and caffeine (on different days)
+caffeine_and_beer = [
+    "caffeine and beer: never at the same time.",
+    "red bull zero = building. beer = fixing.",
+]
+# 3 or more lattes this month
+lattes = [
+    "{lattes} venti lattes. 3 long shots each.",
+    "{lattes} iced sf vanilla protein lattes. same order every time.",
+    "{lattes} lattes = {pumps} pumps of sugar free syrup.",
+]
+
+# What {day} and {night} say, depending on when the latest coding day was.
+# {weekday} is its name, e.g. monday.
+[fuel.names]
+today = { day = "today", night = "tonight" }
+yesterday = { day = "yesterday", night = "last night" }
+earlier = { day = "{weekday}", night = "{weekday} night" }
+
+
+# ---- Under the commit clock -----------------------------------------------------------
+# Groups are named by the hour (0-23) they start at; the busiest hour of the day uses
+# the last group that starts at or before it.
+# {hour}  the busiest hour, e.g. "9 am", "noon", "midnight"
+[hours]
+0 = [
+    "{hour}. sleep?",
+    "{hour}. sleep is a suggestion.",
+    "{hour}. the bugs come out at night.",
+    "{hour}. night shift, unpaid.",
+    "{hour}. red bull zero.",
+]
+5 = [
+    "{hour}. sunrise commits.",
+    "{hour}. still haven't slept.",
+    "{hour}. latte hasn't happened yet.",
+]
+9 = [
+    "{hour}. coffee-powered.",
+    "{hour}. peak caffeine.",
+    "{hour}. iced venti in hand.",
+    "{hour}. on campus, 3 espresso long shots in.",
+    "{hour}. protein latte in hand.",
+]
+13 = [
+    "{hour}. like a normal person.",
+    "{hour}. on campus, latte in hand.",
+    "{hour}. latte #1. also the last one (hopefully).",
+]
+18 = [
+    "{hour}. prime time.",
+    "{hour}. sunset. latte's worn off.",
+]
+22 = [
+    "{hour}. sleep?",
+    "{hour}. one more commit, then bed.",
+    "{hour}. just one more fix.",
+]
+
+
+# ---- Beside the "languages" heading ---------------------------------------------------
+# {top}      the top language, lowercase    {top_pct}  its share of lines written
+# {second}   the second language, lowercase
+[languages]
+off = true   # no scribble beside the heading; delete this line to bring them back
+# the top language has at least half the lines, and there are others
+mostly_one = [
+    "mostly {top}. sorry, {second}.",
+    "{top} is doing the heavy lifting",
+    "{top} gang.",
+    "{top_pct}% {top}. no regrets.",
+    "it's {top} all the way down",
+    "{second} is the side quest",
+    "{top} main, {second} alt",
+    "{top}, obviously.",
+    "slowly moving it all to neovim",
+]
+# only one language
+only_one = [
+    "just {top}, really.",
+    "{top} and nothing else",
+    "loyal to {top}",
+]
+# no language has half the lines
+mixed = [
+    "a bit of everything.",
+    "polyglot, allegedly.",
+    "can't commit to just one. ironic.",
+    "jack of all languages",
+]
+
+
+# ---- Beside one of the other languages in the list (not the top one) ------------------
+# {language}  the language's name     {hidden}  how many languages "Other" holds
+[language_row]
+off = true   # no scribbles beside the languages; delete this line to bring them back
+# any language under 2% of the lines (as well as its own lines below)
+tiny = [
+    "a phase.",
+    "tried it once.",
+    "one weekend, zero regrets",
+    "it seemed like a good idea",
+    "for science.",
+    "a brief situationship",
+]
+# the "Other" row
+other = [
+    "the junk drawer",
+    "side quests",
+    "misc. regrets",
+]
+# the "Other" row, when it holds 2 or more languages
+other_several = [
+    "{hidden} more languages in here",
+    "{hidden} phases, one row",
+]
+
+# Lines for one language, named as GitHub spells it. Languages not listed here only
+# get the [language_row] lines above.
+[language_row.by_language]
+Python = ["pycharm. for now.", "indentation enjoyer", "import antigravity", "whitespace matters",
+          "pip install everything"]
+Java = ["intellij. for now.", "public static void quirky()", "AbstractQuipFactoryBean",
+        "write once, debug everywhere", "verbose, but loyal"]
+JavaScript = ["intellij, until neovim wins", "[] + {{}} = ?", "undefined is not a function",
+              "it works. don't ask why.", "NaN !== NaN"]
+TypeScript = ["intellij, until neovim wins", "javascript in a suit", "any, any, any", "types: mostly vibes"]
+CSS = ["centered a div once", "!important", "looked fine locally"]
+HTML = ["a programming language. fight me.", "<div><div><div>"]
+Lua = ["it's my neovim config", "init.lua and friends", "for neovim. only neovim."]
+C = ["segfault (core dumped)", "malloc and pray", "neovim, in wsl"]
+"C++" = ["400-line template errors", "undefined behavior enjoyer"]
+"C#" = ["java with better manners"]
+Rust = ["fighting the borrow checker", "blazingly fast (tm)"]
+Go = ["if err != nil", "gopher it"]
+Shell = ["works on my machine", "chmod +x and hope"]
+SQL = ["DROP TABLE regrets;", "SELECT * FROM problems"]
+Kotlin = ["java, but fun"]
+Swift = ["optional?.chaining?.everywhere"]
+PHP = ["still runs the internet"]
+Ruby = ["too pretty to be fast"]
+R = ["statistically significant"]
+Dockerfile = ["works in my container"]
+Makefile = ["tabs, not spaces. or else."]
+Haskell = ["a monad is just a..."]
+Assembly = ["mov eax, 1 ; why"]
+MATLAB = ["1-indexed and proud"]
+Scala = ["java with a phd"]
+TeX = ['\begin{{suffering}}']
+
+
+# ---- Under the repositories -----------------------------------------------------------
+# {top_repo}          the most active repo's name   {share}  its % of all commits
+# {top_repo_deleted}  lines deleted in it (12.9K)
+# {private}           how many of the listed repos are private
+# {stars} {forks}     stars and forks on my repos   {orgs}   orgs I've committed to
+# {owned_repos}       repos I own                   {contributed_repos}  repos I've committed to
+[repos]
+always = [
+]
+# the most active repo has 20% or more of all commits
+big_share = [
+    "{share}% of my commits live in one repo.",
+]
+# ...and it's public
+big_share_public = [
+    "{top_repo}: basically my second home",
+    "{share}% of my commits went into {top_repo}",
+]
+# the most active repo is public and I deleted 1,000+ lines in it
+top_repo_deletions = [
+    "deleted {top_repo_deleted} lines in {top_repo}. no regrets.",
+]
+# exactly one of the listed repos is private
+one_private = [
+    "1 of these is private. trust me, it's great.",
+]
+# two or more of the listed repos are private
+several_private = [
+    "{private} of these are private. they're great, trust me.",
+]
+# any of the listed repos are private
+any_private = [
+    "the private ones are the good ones. allegedly.",
+]
+# my repos have stars
+stars = [
+    "{stars} {stars:star|stars}. each one framed on my wall.",
+]
+# my repos have forks
+forks = [
+    "{forks} {forks:fork|forks}. someone out there is using this.",
+]
+# I've committed to an organization's repos
+orgs = [
+    "{orgs} {orgs:org trusts|orgs trust} me with write access. bold.",
+]
+# I own 2 or more repos
+own_repos = [
+    "{owned_repos} repos. naming them was the hard part.",
+]
+# I've committed to more repos than I own
+get_around = [
+    "committed to {contributed_repos} {contributed_repos:repo|repos}. i get around.",
+]
+
+
+# ---- The printed footer (typed, not handwritten) --------------------------------------
+[footer]
+always = [
+    "recounted every night from raw git history. the green squares lie.",
+    "counted from every branch of every repo, not just the green squares.",
+    "recounted nightly from git log while i (hopefully) sleep.",
+    "numbers straight from git history, recounted every night.",
+]
