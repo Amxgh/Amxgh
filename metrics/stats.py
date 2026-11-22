@@ -21,6 +21,7 @@ class RepoRow:
     added: int
     deleted: int
     stars: int
+    private: bool
 
 
 @dataclass
@@ -66,6 +67,7 @@ class Summary:
     month: Month
     hours: list[int]  # commits by hour of day (author's local time), 0-23
     languages: list[tuple[str, int]]  # (language, lines written), "Other" last
+    language_count: int
     top_repos: list[RepoRow]
     owned_repos: int
     contributed_repos: int
@@ -149,6 +151,7 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
                               profile.login, cfg.show_private_names),
             commits=n, added=a, deleted=d,
             stars=repos[key].stars if key in repos else 0,
+            private=repos[key].private if key in repos else False,
         )
         for key, (n, a, d) in top
     ]
@@ -177,6 +180,7 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
         month=_month(commits, now.date()),
         hours=hours,
         languages=languages,
+        language_count=len(ranked),
         top_repos=top_repos,
         owned_repos=len(owned),
         contributed_repos=len(per_repo),

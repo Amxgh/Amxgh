@@ -1,21 +1,24 @@
 """Renders the summary as an SVG card, one file per color scheme.
 
 The numbers are printed; the commentary is scribbled on top in a handwriting font,
-with pen arrows and circles. The wording of the scribbles lives in the
-"Handwritten notes" section below and is meant to be edited.
+with pen arrows and circles. What the scribbles say lives in notes.py; this module
+decides where they go, skipping any line that wouldn't fit its spot.
 """
 
 from __future__ import annotations
 
 import base64
+import json
 import math
 import random
 from functools import cache
 from html import escape
 from pathlib import Path
 
+from . import notes
+from .fmt import compact, plural
 from .languages import color_of
-from .stats import Month, Summary
+from .stats import Summary
 
 W, P = 840, 28  # canvas width, outer padding
 CW = W - 2 * P  # content width
@@ -23,9 +26,11 @@ RIGHT = P + 380  # left edge of this month's column
 
 THEMES = {
     "light": dict(bg="#ffffff", border="#d1d9e0", fg="#1f2328", fg2="#59636e", fg3="#818b98",
-                  rule="#d1d9e0", accent="#bc4c00", add="#1a7f37", delete="#cf222e", other="#c8d1da"),
+                  rule="#d1d9e0", accent="#0a6fb0", add="#1a7f37", delete="#cf222e", other="#c8d1da",
+                  ink="#6a4ff0"),
     "dark": dict(bg="#0d1117", border="#30363d", fg="#f0f6fc", fg2="#9198a1", fg3="#6e7681",
-                 rule="#30363d", accent="#f0883e", add="#3fb950", delete="#f85149", other="#3d444d"),
+                 rule="#30363d", accent="#3fa9f5", add="#3fb950", delete="#f85149", other="#3d444d",
+                 ink="#8369ff"),
 }
 
 SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
@@ -33,103 +38,13 @@ MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mo
 HAND = '"Pen", "Segoe Print", "Bradley Hand", cursive'
 HAND_PX = 22
 FONT_FILE = Path(__file__).with_name("fonts") / "nanum-pen-script.woff2"  # SIL OFL, see fonts/OFL.txt
-
-FOOTER = "recounted every night from raw git history. the green squares lie."
-
-
-# ---- Handwritten notes --------------------------------------------------------------
-
-HOUR_QUIPS = [  # (from this hour on, quip)
-    (0, "who needs sleep"),
-    (5, "up before the bugs"),
-    (9, "coffee-powered"),
-    (13, "like a normal person"),
-    (18, "after-dinner shift"),
-    (22, "sleep is a suggestion"),
-]
-
-
-def _hero_note(s: Summary) -> tuple[str, str] | None:
-    if 0 < s.fixes < s.commits:
-        return f"{s.fixes:,} of them", f"fix the other {s.commits - s.fixes:,}"
-    if 0 < s.commits_this_year < s.commits:
-        return f"{s.commits_this_year:,} of them", "were this year alone"
-    return None
-
-
-def _month_note(m: Month) -> str:
-    if not m.commits:
-        return f"{m.previous_name} had {m.previous:,}. recovering." if m.previous else ""
-    if m.record:
-        if m.today < len(m.days):
-            return f"my biggest month ever. it's the {_ordinal(m.today)}."
-        return "my biggest month ever."
-    if m.previous > m.commits:
-        return f"{m.previous_name} had {m.previous:,}. catching up."
-    if m.previous:
-        return f"already beat {m.previous_name} ({m.previous:,})."
-    return ""
-
-
-def _best_day_note(m: Month) -> str:
-    return "today. still going." if m.best_day == m.today else f"the {_ordinal(m.best_day)}. long day."
-
-
-def _pr_note(s: Summary) -> str:
-    rest = s.pull_requests - s.merged_pull_requests
-    if s.merged_pull_requests and 0 < rest <= s.pull_requests * 0.2:
-        return f"we don't talk about the other {rest}"
-    return "every single one." if s.pull_requests and not rest else ""
-
-
-def _busiest_note(s: Summary) -> str:
-    return "i'm fine." if s.busiest_day >= 30 else ""
-
-
-def _hour_note(hour: int) -> str:
-    quip = [q for start, q in HOUR_QUIPS if hour >= start][-1]
-    return f"{_hour(hour)}. {quip}."
-
-
-def _language_note(languages: list[tuple[str, int]]) -> str:
-    named = [(name, v) for name, v in languages if name != "Other"]
-    if not named:
-        return ""
-    top, share = named[0][0].lower(), named[0][1] / sum(v for _, v in languages)
-    if share >= 0.5 and len(named) > 1:
-        return f"mostly {top}. sorry, {named[1][0].lower()}."
-    return f"just {top}, really." if share >= 0.5 else "a bit of everything."
+HAND_WIDTHS = json.loads(FONT_FILE.with_suffix(".widths.json").read_text())  # advance per char, in em
 
 
 # ---- Text helpers -------------------------------------------------------------------
 
-def compact(n: int) -> str:
-    """1,284 / 12.9K / 4.2M"""
-    if n < 10_000:
-        return f"{n:,}"
-    for div, suffix in ((1e9, "B"), (1e6, "M"), (1e3, "K")):
-        if n >= div * 0.99995:
-            v = n / div
-            text = f"{v:.1f}" if v < 100 else f"{v:.0f}"
-            return text.removesuffix(".0") + suffix
-    return f"{n:,}"
-
-
 def _pct(share: float) -> str:
     return "<0.1%" if share < 0.001 else f"{share * 100:.1f}%"
-
-
-def _plural(n: int, word: str) -> str:
-    return f"{word}{'' if n == 1 else 's'}"
-
-
-def _ordinal(n: int) -> str:
-    suffix = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
-    return f"{n}{suffix}"
-
-
-def _hour(h: int) -> str:
-    return {0: "midnight", 12: "noon"}.get(h) or f"{h % 12} {'am' if h < 12 else 'pm'}"
 
 
 def _truncate(text: str, limit: int) -> str:
@@ -137,8 +52,17 @@ def _truncate(text: str, limit: int) -> str:
 
 
 def _hand_width(text: str) -> float:
-    """Rough rendered width of handwritten text (layout estimate only)."""
-    return len(text) * HAND_PX * 0.35
+    """Rendered width of handwritten text, from the font's own glyph widths."""
+    return HAND_PX * sum(HAND_WIDTHS.get(ch, 0.45) for ch in text)
+
+
+# Printed text uses whatever system font the viewer has, so these are generous averages.
+def _sans_width(text: str) -> float:  # 13px sans
+    return len(text) * 6.4
+
+
+def _mono_width(text: str) -> float:  # 12px mono
+    return len(text) * 7.3
 
 
 def _text(x, y, content, cls, anchor=None, extra="") -> str:
@@ -152,17 +76,26 @@ def _span(content, cls=None, dx=None) -> str:
     return f"<tspan{c}{d}>{content}</tspan>"
 
 
-def _scribble(note: str, dx=10) -> str:
+def _scribble(note: str | None, dx=10) -> str:
     """A handwritten aside that continues a printed line."""
     return _span(escape(note), "hand", dx) if note else ""
 
 
 def _hand(x, y, note, anchor=None, tilt=0.0) -> str:
     t = _text(x, y, escape(note), "hand", anchor)
-    return f'<g transform="rotate({tilt} {x:.1f} {y:.1f})">{t}</g>' if tilt else t
+    return f'<g transform="rotate({tilt:.2f} {x:.1f} {y:.1f})">{t}</g>' if tilt else t
+
+
+def _tilt(slot: str, around: float, spread: float) -> float:
+    """A slightly different angle every run, like notes jotted at different times."""
+    return around + random.Random(f"tilt-{slot}-{notes.RUN}").uniform(-spread, spread)
 
 
 # ---- Pen strokes --------------------------------------------------------------------
+
+def _rng(slot: str) -> random.Random:
+    return random.Random(f"{slot}-{notes.RUN}")
+
 
 def _smooth(pts: list[tuple[float, float]]) -> str:
     """A Catmull-Rom curve through the points, as path data."""
@@ -176,18 +109,19 @@ def _smooth(pts: list[tuple[float, float]]) -> str:
     return d
 
 
-def _pencil_line(y: float, seed: str) -> str:
+def _pencil_line(y: float, slot: str) -> str:
     """A divider ruled by hand: not quite straight, not quite level."""
-    rng = random.Random(seed)
+    rng = _rng(slot)
     n = 8
     pts = [(P + CW * i / n + (rng.uniform(-8, 8) if 0 < i < n else 0), y + rng.uniform(-1.0, 1.0))
            for i in range(n + 1)]
     return f'<path d="{_smooth(pts)}" class="pencil"/>'
 
 
-def _arrow(x1, y1, x2, y2, bend: float, seed: str) -> str:
+def _arrow(x1, y1, x2, y2, bend: float, slot: str) -> str:
     """A curved pen arrow from (x1, y1) to (x2, y2); bend bows it sideways."""
-    rng = random.Random(seed)
+    rng = _rng(slot)
+    bend *= rng.uniform(0.6, 1.4)
     dx, dy = x2 - x1, y2 - y1
     length = math.hypot(dx, dy) or 1.0
     cx = (x1 + x2) / 2 - dy / length * bend
@@ -196,22 +130,23 @@ def _arrow(x1, y1, x2, y2, bend: float, seed: str) -> str:
     head = min(7.5, length * 0.45)
     wings = []
     for spread in (-0.5, 0.45):
-        a = angle + math.pi + spread + rng.uniform(-0.12, 0.12)
+        a = angle + math.pi + spread + rng.uniform(-0.15, 0.15)
         wings.append((x2 + head * math.cos(a), y2 + head * math.sin(a)))
     (ax, ay), (bx, by) = wings
     return (f'<path d="M{x1:.1f},{y1:.1f} Q{cx:.1f},{cy:.1f} {x2:.1f},{y2:.1f} '
             f'M{ax:.1f},{ay:.1f} L{x2:.1f},{y2:.1f} L{bx:.1f},{by:.1f}" class="ink"/>')
 
 
-def _loop(cx, cy, rx, ry, seed: str) -> str:
+def _loop(cx, cy, rx, ry, slot: str) -> str:
     """A quick circle around something: overshoots, drifts outward, slightly tilted."""
-    rng = random.Random(seed)
+    rng = _rng(slot)
     tilt = rng.uniform(-0.2, 0.2)
-    start = rng.uniform(-2.2, -1.2)
+    start = rng.uniform(-2.4, -1.0)
+    turns = rng.uniform(1.08, 1.22)
     pts = []
     n = 26
     for i in range(n + 1):
-        t = start + 2 * math.pi * 1.15 * i / n
+        t = start + 2 * math.pi * turns * i / n
         grow = 1 + 0.14 * i / n + rng.uniform(-0.03, 0.03)
         x, y = rx * grow * math.cos(t), ry * grow * math.sin(t)
         pts.append((cx + x * math.cos(tilt) - y * math.sin(tilt), cy + x * math.sin(tilt) + y * math.cos(tilt)))
@@ -250,8 +185,8 @@ def _style(c: dict) -> str:
     .axis {{ font-family: {MONO}; font-size: 10px; fill: {c['fg3']}; }}
     .foot {{ font-family: {MONO}; font-size: 11px; fill: {c['fg3']}; }}
     .name {{ font-size: 13px; }}
-    .hand {{ font-family: {HAND}; font-size: {HAND_PX}px; font-weight: 400; letter-spacing: 0; fill: {c['accent']}; }}
-    .ink {{ fill: none; stroke: {c['accent']}; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }}
+    .hand {{ font-family: {HAND}; font-size: {HAND_PX}px; font-weight: 400; letter-spacing: 0; fill: {c['ink']}; }}
+    .ink {{ fill: none; stroke: {c['ink']}; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }}
     .pencil {{ fill: none; stroke: {c['rule']}; stroke-width: 1.2; stroke-linecap: round; }}
     .faint {{ fill: {c['fg3']}; }}
     .add {{ fill: {c['add']}; }}
@@ -268,18 +203,22 @@ def _style(c: dict) -> str:
 def _hero(s: Summary, out: list[str], y: int) -> int:
     """All-time totals, left column. Returns the bottom edge."""
     number = f"{s.commits:,}"
-    lead = f"{_plural(s.commits, 'commit')} since {s.since}"
+    lead = f"{plural(s.commits, 'commit')} since {s.since}"
     out.append(_text(P - 3, y + 62, number, "hero"))
     out.append(_text(P, y + 88, lead, "lead"))
 
-    if note := _hero_note(s):
-        number_w = 31 * sum(ch.isdigit() for ch in number) + 15 * number.count(",")
-        nx, ny = P + number_w + 34, y + 30
-        out.append(f'<g transform="rotate(-4 {nx:.1f} {ny})">'
-                   + _text(nx, ny, escape(note[0]), "hand") + _text(nx + 8, ny + 22, escape(note[1]), "hand")
-                   + "</g>")
+    number_w = 31 * sum(ch.isdigit() for ch in number) + 15 * number.count(",")
+    nx, ny = P + number_w + 34, y + 30
+    room = RIGHT - nx - 12
+
+    def fits(lines: tuple[str, ...]) -> bool:
+        return all(_hand_width(line) <= room - 8 * i for i, line in enumerate(lines))
+
+    if note := notes.pick("hero", notes.hero(s), fits):
+        lines = "".join(_text(nx + 8 * i, ny + 22 * i, escape(line), "hand") for i, line in enumerate(note))
+        out.append(f'<g transform="rotate({_tilt("hero", -4, 1.5):.2f} {nx:.1f} {ny})">{lines}</g>')
         lead_end = P + len(lead) * 7.3
-        out.append(_arrow(nx + 16, ny + 31, lead_end + 9, y + 82, -10, "hero"))
+        out.append(_arrow(nx + 16, ny + 9 + 22 * (len(note) - 1), lead_end + 9, y + 82, -10, "hero"))
 
     lines = [
         _span(f"+{compact(s.added)}", "mono add") + _span(f"−{compact(s.deleted)}", "mono del", 8)
@@ -288,7 +227,7 @@ def _hero(s: Summary, out: list[str], y: int) -> int:
     if s.commits_this_year:
         lines.append(_span(f"{s.commits_this_year:,}", "em") + f" so far in {s.year}")
     if s.active_days:
-        days = _span(f"{s.active_days:,}", "em") + f" {_plural(s.active_days, 'day')} with a commit"
+        days = _span(f"{s.active_days:,}", "em") + f" {plural(s.active_days, 'day')} with a commit"
         if s.longest_streak > 1:
             days += f", {s.longest_streak} in a row at best"
         lines.append(days)
@@ -306,8 +245,8 @@ def _this_month(s: Summary, out: list[str], x0: float, y: int) -> int:
     out.append(_text(x0, y + 14, f"{m.name.lower()} so far", "h"))
     n = m.commits
     if n:
-        days = f"{m.active_days} of {m.today} {_plural(m.today, 'day')}"
-        out.append(_text(x0, y + 50, f"{n:,}" + _span(f"{_plural(n, 'commit')} on {days}", "body", 8), "big"))
+        days = f"{m.active_days} of {m.today} {plural(m.today, 'day')}"
+        out.append(_text(x0, y + 50, f"{n:,}" + _span(f"{plural(n, 'commit')} on {days}", "body", 8), "big"))
     else:
         out.append(_text(x0, y + 50, "nothing yet", "big"))
 
@@ -330,24 +269,26 @@ def _this_month(s: Summary, out: list[str], x0: float, y: int) -> int:
             if hi:
                 out.append(_text(x + bw / 2, base - h - 6, f"{v}", "axis hi", "middle"))
 
-    # a note beside the best day, if it stands out and there's room next to it
+    # a note beside the best day, if it stands out and there's room on either side of it
     if n and peak >= 5 and peak >= 2 * n / m.active_days:
-        note = _best_day_note(m)
-        nw = _hand_width(note)
         bx = x0 + (m.best_day - 1) * slot + 2
+        nb = top + 15
 
         def clear(lo: float, hi: float) -> bool:
             return lo >= x0 and hi <= x0 + w and all(
                 h < plot_h - 20 for j, h in enumerate(heights)
                 if x0 + (j + 1) * slot > lo and x0 + j * slot < hi)
 
-        nb = top + 15
-        if clear(bx + bw + 22, bx + bw + 22 + nw):
-            out.append(_hand(bx + bw + 22, nb, note))
-            out.append(_arrow(bx + bw + 18, nb - 6, bx + bw + 4, top + 4, 3, "best"))
-        elif clear(bx - 22 - nw, bx - 22):
-            out.append(_hand(bx - 22, nb, note, "end"))
-            out.append(_arrow(bx - 18, nb - 6, bx - 4, top + 4, -3, "best"))
+        for note in notes.ordered("best-day", notes.best_day(m, s)):
+            nw = _hand_width(note)
+            if clear(bx + bw + 22, bx + bw + 22 + nw):
+                out.append(_hand(bx + bw + 22, nb, note))
+                out.append(_arrow(bx + bw + 18, nb - 6, bx + bw + 4, top + 4, 3, "best"))
+                break
+            if clear(bx - 22 - nw, bx - 22):
+                out.append(_hand(bx - 22, nb, note, "end"))
+                out.append(_arrow(bx - 18, nb - 6, bx - 4, top + 4, -3, "best"))
+                break
 
     def at(day: int) -> float:
         return x0 + (day - 1) * slot + slot / 2
@@ -366,22 +307,24 @@ def _this_month(s: Summary, out: list[str], x0: float, y: int) -> int:
         end = base + 42
         out.append(_text(x0, end, _span(f"+{compact(m.added)}", "mono add")
                          + _span(f"−{compact(m.deleted)}", "mono del", 8) + _span("lines this month", dx=8), "body"))
-    if note := _month_note(m):
+    if note := notes.pick("month", notes.month(m), lambda t: _hand_width(t) <= w - 8):
         end += 28
-        out.append(_hand(x0 + 4, end, note, tilt=-1.5))
+        out.append(_hand(x0 + 4, end, note, tilt=_tilt("month", -1.5, 1.2)))
     return end
+
+
+CLOCK_W = 264
 
 
 def _clock(s: Summary, out: list[str], y: int) -> int:
     """Commits by hour of day, right-aligned. Returns the bottom edge."""
-    cw = 264
-    x0 = W - P - cw
+    x0 = W - P - CLOCK_W
     peak_h = max(range(24), key=lambda h: s.hours[h])
     peak = s.hours[peak_h]
     out.append(_text(x0, y, "when I commit", "h"))
     top, plot_h = y + 18, 30
     base = top + plot_h
-    slot = cw / 24
+    slot = CLOCK_W / 24
     bw = slot - 3
     for h, v in enumerate(s.hours):
         x = x0 + h * slot + 1.5
@@ -399,7 +342,9 @@ def _clock(s: Summary, out: list[str], y: int) -> int:
             continue
         out.append(_text(x0 + h * slot + 1.5, base + 15, label, "axis"))
 
-    note = _hour_note(peak_h)
+    note = notes.pick("hours", notes.hours(peak_h), lambda t: _hand_width(t) <= CLOCK_W)
+    if not note:
+        return base + 15
     nw = _hand_width(note)
     nx = min(max(px - nw * 0.6, x0), W - P - nw)
     ny = base + 46
@@ -425,21 +370,30 @@ def render(s: Summary, theme: str) -> str:
 
     # Middle: pull requests and busiest day, beside the commit clock
     y += 36
+    clock = any(s.hours)
+    room_end = (W - P - CLOCK_W - 24) if clock else W - P
+
+    def aside(slot: str, printed: str, pool: list[str]) -> str:
+        start = P + _sans_width(printed) + 10
+        return _scribble(notes.pick(slot, pool, lambda t: start + _hand_width(t) <= room_end))
+
     facts = []
-    if s.pull_requests:
-        merged = f", {_span(f'{s.merged_pull_requests:,}', 'em')} merged" if s.merged_pull_requests else ""
-        facts.append(_span(f"{s.pull_requests:,}", "em") + f" {_plural(s.pull_requests, 'pull request')} opened"
-                     + merged + _scribble(_pr_note(s)))
-    if s.busiest_day:
-        facts.append(_span(f"{s.busiest_day:,}", "em")
-                     + f" {_plural(s.busiest_day, 'commit')} in a single day ({s.busiest_date})"
-                     + _scribble(_busiest_note(s)))
+    if pr := s.pull_requests:
+        merged = s.merged_pull_requests
+        tail = f" {plural(pr, 'pull request')} opened"
+        printed = f"{pr:,}{tail}" + (f", {merged:,} merged" if merged else "")
+        line = _span(f"{pr:,}", "em") + tail + (f", {_span(f'{merged:,}', 'em')} merged" if merged else "")
+        facts.append(line + aside("pull-requests", printed, notes.pull_requests(s)))
+    if busiest := s.busiest_day:
+        tail = f" {plural(busiest, 'commit')} in a single day ({s.busiest_date})"
+        line = _span(f"{busiest:,}", "em") + tail
+        facts.append(line + aside("busiest", f"{busiest:,}{tail}", notes.busiest(s)))
     fy = y + 14 if len(facts) > 1 else y + 26
     for f in facts:
         out.append(_text(P, fy, f, "body"))
         fy += 24
     bottom = fy - 24
-    if any(s.hours):
+    if clock:
         bottom = max(bottom, _clock(s, out, y))
 
     # Bottom: repositories (left) and languages (right)
@@ -468,17 +422,25 @@ def render(s: Summary, theme: str) -> str:
     figures = [(v, label) for v, label in (
         (s.owned_repos, "of my own"),
         (s.contributed_repos, "committed to"),
-        (s.stars, _plural(s.stars, "star")),
-        (s.forks, _plural(s.forks, "fork")),
-        (s.organizations, _plural(s.organizations, "org")),
+        (s.stars, plural(s.stars, "star")),
+        (s.forks, plural(s.forks, "fork")),
+        (s.organizations, plural(s.organizations, "org")),
     ) if v]
     if figures:
         left_end += 36
         parts = [_span(f"{compact(v)}", "em", 18 if i else None) + f" {label}" for i, (v, label) in enumerate(figures)]
         out.append(_text(lx, left_end, "".join(parts), "body"))
 
+    if s.top_repos or figures:
+        if note := notes.pick("repos", notes.repos(s), lambda t: _hand_width(t) <= col_w - 14):
+            left_end += 34
+            out.append(_hand(lx + 6, left_end, note, tilt=_tilt("repos", -1.8, 1.2)))
+
     if s.languages:
-        out.append(_text(rx, y, "languages" + _scribble(_language_note(s.languages), 12), "h"))
+        heading_room = col_w - _mono_width("languages") - 12
+        heading_note = notes.pick("languages", notes.languages(s.languages),
+                                  lambda t: _hand_width(t) <= heading_room)
+        out.append(_text(rx, y, "languages" + _scribble(heading_note, 12), "h"))
         ry = y + 14
         total = sum(v for _, v in s.languages)
         colors = [c["other"] if name == "Other" else _visible(color_of(name), theme) for name, _ in s.languages]
@@ -491,20 +453,35 @@ def render(s: Summary, theme: str) -> str:
             out.append(f'<rect x="{x:.2f}" y="{ry}" width="{w:.2f}" height="8" fill="{color}"/>')
             x += w + 2
         out.append("</g>")
+
+        # one of the other languages gets a note of its own, between its name and its numbers
+        named = sum(1 for name, _ in s.languages if name != "Other")
+        candidates = []
+        for name, v in s.languages[1:]:
+            start = rx + 18 + _sans_width(name) + 10
+            room = (W - P - 60 - _mono_width(compact(v)) - 16) - start
+            pool = [q for q in notes.language_row(name, v / total, s.language_count - named)
+                    if _hand_width(q) <= room]
+            if pool:
+                candidates.append((name, pool))
+        row_note = {}
+        if chosen := notes.pick("language-row", candidates):
+            row_note[chosen[0]] = notes.pick(f"language-row-{chosen[0]}", chosen[1])
+
         ry += 36
         row_h = 26
         for (name, v), color in zip(s.languages, colors):
             out.append(f'<rect x="{rx:.1f}" y="{ry - 9}" width="8" height="8" rx="2" fill="{color}"/>')
-            out.append(_text(rx + 18, ry, esc(name), "name"))
+            out.append(_text(rx + 18, ry, esc(name) + _scribble(row_note.get(name)), "name"))
             out.append(_text(W - P - 60, ry, compact(v), "mono", "end"))
-            out.append(_text(W - P, ry, _pct(v / total), "mono-strong", "end"))
+            out.append(_text(W - P, ry, esc(_pct(v / total)), "mono-strong", "end"))
             ry += row_h
         right_end = ry - row_h
 
     y = max(left_end, right_end) + 30
     out.append(_pencil_line(y, "bottom"))
     y += 24
-    out.append(_text(P, y, FOOTER, "foot"))
+    out.append(_text(P, y, esc(notes.pick("footer", notes.FOOTERS)), "foot"))
     out.append(_text(W - P, y, f"updated {s.updated}", "foot", "end"))
     h = y + 22
 
