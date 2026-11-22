@@ -1,52 +1,53 @@
 name: Metrics
+
 on:
-  # Schedule daily updates at 00:00 UTC
-  schedule: [{cron: "0 0 * * *"}]
-  # (optional) Run workflow manually
+  schedule:
+    - cron: "0 6 * * *" # daily
   workflow_dispatch:
-  # (optional) Run workflow when pushing on master/main
-  push: {branches: ["master", "main"]}
+  push:
+    branches: [main]
+    paths:
+      - "metrics/**"
+      - "metrics.toml"
+      - ".github/workflows/main.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: metrics
+  cancel-in-progress: false
+
 jobs:
-  github-metrics:
+  metrics:
     runs-on: ubuntu-latest
-    permissions:
-      # Required to write the metrics SVG file to the repository
-      contents: write
+    timeout-minutes: 30
     steps:
-      - uses: lowlighter/metrics@latest
+      - uses: actions/checkout@v5
+
+      # Bare clones of every scanned repository, so daily runs only fetch what's new.
+      - name: Restore repository clones
+        uses: actions/cache@v4
         with:
-          # Your GitHub Personal Access Token (PAT)
-          token: ${{ secrets.METRICS_TOKEN }}
+          path: .cache/repos
+          key: metrics-repos-${{ github.run_id }}
+          restore-keys: metrics-repos-
 
-          # Core Options
-          user: Amxgh
-          template: classic
-          # Add base_indepth to enable more detailed stats for core sections
-          base: header, activity, community, repositories, metadata
-          base_indepth: yes
-          
-          # Output configuration
-          # It's good practice to specify the output path (default is github-metrics.svg)
-          output: assets/github-metrics.svg
+      # METRICS_TOKEN: classic personal access token with repo, read:org, read:user
+      # and user:email scopes (authorize it for SSO if an organization requires that).
+      - name: Generate cards
+        run: python3 -m metrics
+        env:
+          GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
 
-          # Timezone and Commit Filtering (from original)
-          repositories_affiliations: owner, organization_member
-          config_timezone: AEST
-          
-          # Lines of code plugin (more reliable)
-          plugin_lines: yes
-          plugin_lines_delay: 30        # retry after 30s to avoid zero/incorrect diffs
-          plugin_lines_sections: repositories
-          # plugin_lines_history_limit: 1 # show last 1 year; raise if you want more history
-
-          
-          
-          # 🈷️ Most Used Languages Plugin
-          plugin_languages: yes
-          # Options to fine-tune language display
-          plugin_languages_limit: 15
-          plugin_languages_threshold: 0% # Display even small percentages
-          plugin_languages_colors: github, python:#3771A1, typescript:#3178C6 
-
-
-
+      - name: Commit updated cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          if git diff --cached --quiet; then
+            echo "Cards unchanged"
+            exit 0
+          fi
+          git commit -m "Update metrics cards [skip ci]"
+          git push || { git pull --rebase && git push; }
