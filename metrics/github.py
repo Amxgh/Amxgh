@@ -72,8 +72,6 @@ class Profile:
     emails: set[str]
     pull_requests: int
     merged_pull_requests: int
-    issues: int
-    reviews: int
     github_commit_count: int  # GitHub's own figure (default branches only), for comparison
     scopes: set[str] | None = field(default=None)
 
@@ -147,7 +145,6 @@ def collect(gh: GitHub, extra_emails: list[str], extra_repos: list[str]) -> Prof
             contributionsCollection { contributionYears }
             pullRequests { totalCount }
             merged: pullRequests(states: MERGED) { totalCount }
-            issues { totalCount }
         } }"""
     )["viewer"]
     login = viewer["login"]
@@ -178,14 +175,14 @@ def collect(gh: GitHub, extra_emails: list[str], extra_repos: list[str]) -> Prof
     # Per-year contribution totals, plus repositories GitHub has recorded contributions
     # to (this is how external open-source repositories get found).
     now = datetime.now(timezone.utc)
-    reviews = github_commits = 0
+    github_commits = 0
     for years in _chunks(viewer["contributionsCollection"]["contributionYears"], 3):
         parts = []
         for y in years:
             end = min(datetime(y, 12, 31, 23, 59, 59, tzinfo=timezone.utc), now)
             parts.append(
                 f"""y{y}: contributionsCollection(from: "{y}-01-01T00:00:00Z", to: "{end:%Y-%m-%dT%H:%M:%SZ}") {{
-                    totalCommitContributions totalPullRequestReviewContributions
+                    totalCommitContributions
                     commitContributionsByRepository(maxRepositories: 100) {{ repository {{ {REPO_FIELDS} }} }}
                     pullRequestContributionsByRepository(maxRepositories: 100) {{ repository {{ {REPO_FIELDS} }} }}
                 }}"""
@@ -194,7 +191,6 @@ def collect(gh: GitHub, extra_emails: list[str], extra_repos: list[str]) -> Prof
         for y in years:
             c = data[f"y{y}"]
             github_commits += c["totalCommitContributions"]
-            reviews += c["totalPullRequestReviewContributions"]
             for item in c["commitContributionsByRepository"] + c["pullRequestContributionsByRepository"]:
                 add(item["repository"])
 
@@ -234,8 +230,6 @@ def collect(gh: GitHub, extra_emails: list[str], extra_repos: list[str]) -> Prof
         emails=emails,
         pull_requests=viewer["pullRequests"]["totalCount"],
         merged_pull_requests=viewer["merged"]["totalCount"],
-        issues=viewer["issues"]["totalCount"],
-        reviews=reviews,
         github_commit_count=github_commits,
         scopes=gh.scopes,
     )

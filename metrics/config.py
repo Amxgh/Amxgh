@@ -22,7 +22,6 @@ class Config:
     exclude_commits: list[str] = field(default_factory=list)
     top_repos: int = 5
     top_languages: int = 6
-    chart_months: int = 60
 
     @classmethod
     def load(cls, path: str | Path) -> "Config":
@@ -45,5 +44,4 @@ class Config:
             exclude_commits=[c.lower() for c in get("lines", "exclude_commits", [])],
             top_repos=get("display", "top_repos", d.top_repos),
             top_languages=get("display", "top_languages", d.top_languages),
-            chart_months=get("display", "chart_months", d.chart_months),
         )

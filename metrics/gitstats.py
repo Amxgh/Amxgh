@@ -38,6 +38,7 @@ class Commit:
     name: str
     timestamp: int
     date: str  # YYYY-MM-DD in the author's own timezone
+    hour: int  # 0-23, also in the author's own timezone
     subject: str
     files: list[tuple[int, int, str]]  # (added, deleted, path); binary files dropped
     on_default: bool = False
@@ -144,7 +145,8 @@ def scan(path: Path, repo: Repo, emails: set[str], env: dict) -> RepoScan:
             parts = line.split("\t", 2)
             if len(parts) == 3 and parts[0] != "-":
                 files.append((int(parts[0]), int(parts[1]), _real_path(parts[2])))
-        commits.append(Commit(sha, repo.name, email.lower(), name, int(ts), iso[:10], subject.strip(), files))
+        commits.append(Commit(sha, repo.name, email.lower(), name, int(ts), iso[:10], int(iso[11:13]),
+                              subject.strip(), files))
 
     # Which of those commits are on the default branch, and what squash merges contain.
     squashed: set[str] = set()

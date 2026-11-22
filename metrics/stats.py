@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import calendar
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
@@ -22,26 +23,47 @@ class RepoRow:
 
 
 @dataclass
+class Month:
+    """The current calendar month, day by day, up to today."""
+    name: str  # "November"
+    today: int  # day of the month
+    days: list[int]  # commits per day, one entry for every day of the month
+    added: int
+    deleted: int
+    best_day: int  # day of the month with the most commits (0 if none yet)
+    previous_name: str  # "October"
+    previous: int  # commits last month
+    record: bool  # more commits than any earlier month
+
+    @property
+    def commits(self) -> int:
+        return sum(self.days)
+
+    @property
+    def active_days(self) -> int:
+        return sum(1 for n in self.days if n)
+
+
+@dataclass
 class Summary:
     name: str
     login: str
     updated: str
+    since: int  # year of the first commit
+    year: int
     commits: int
     added: int
     deleted: int
-    commits_year: int
-    added_year: int
-    deleted_year: int
+    commits_this_year: int
     active_days: int
     longest_streak: int
     busiest_day: int
+    busiest_date: str  # "3 Nov 2026"
     pull_requests: int
     merged_pull_requests: int
-    reviews: int
-    issues: int
-    monthly: list[tuple[str, int]]  # ("2024-03", commits)
+    month: Month
+    hours: list[int]  # commits by hour of day (author's local time), 0-23
     languages: list[tuple[str, int]]  # (language, lines written), "Other" last
-    language_count: int
     top_repos: list[RepoRow]
     owned_repos: int
     contributed_repos: int
@@ -60,16 +82,28 @@ def _longest_streak(days: set[str]) -> int:
     return best
 
 
-def _months(first: str, last: str, limit: int) -> list[str]:
-    y, m = map(int, last.split("-"))
-    out = []
-    while len(out) < limit:
-        key = f"{y:04d}-{m:02d}"
-        out.append(key)
-        if key <= first:
-            break
-        y, m = (y - 1, 12) if m == 1 else (y, m - 1)
-    return out[::-1]
+def _month(commits: list[Commit], today: date) -> Month:
+    key = f"{today:%Y-%m}"
+    first = today.replace(day=1)
+    prev = first - timedelta(days=1)
+    prev_key = f"{prev:%Y-%m}"
+    per_month = Counter(c.date[:7] for c in commits)
+    this = [c for c in commits if c.date.startswith(key)]
+    days = [0] * calendar.monthrange(today.year, today.month)[1]
+    for c in this:
+        days[int(c.date[8:10]) - 1] += 1
+    earlier = [n for m, n in per_month.items() if m < key]
+    return Month(
+        name=f"{today:%B}",
+        today=today.day,
+        days=days,
+        added=sum(c.added for c in this),
+        deleted=sum(c.deleted for c in this),
+        best_day=max(range(len(days)), key=lambda i: (days[i], -i)) + 1 if this else 0,
+        previous_name=f"{prev:%B}",
+        previous=per_month.get(prev_key, 0),
+        record=bool(this) and bool(earlier) and len(this) > max(earlier),
+    )
 
 
 def _repo_label(repo: Repo | None, name: str, login: str, show_private: bool) -> str:
@@ -81,14 +115,12 @@ def _repo_label(repo: Repo | None, name: str, login: str, show_private: bool) ->
 
 def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
     now = datetime.now(ZoneInfo(cfg.timezone))
-    year_ago = now.timestamp() - 365 * 86400
-    recent = [c for c in commits if c.timestamp >= year_ago]
     per_day = Counter(c.date for c in commits)
+    busiest = max(per_day, key=lambda d: (per_day[d], d), default=None)
 
-    per_month = Counter(c.date[:7] for c in commits)
-    this_month = now.strftime("%Y-%m")
-    first = min(per_month) if per_month else this_month
-    monthly = [(m, per_month.get(m, 0)) for m in _months(first, this_month, cfg.chart_months)]
+    hours = [0] * 24
+    for c in commits:
+        hours[c.hour] += 1
 
     langs: Counter = Counter()
     for c in commits:
@@ -124,22 +156,21 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
         name=profile.name,
         login=profile.login,
         updated=f"{now.day} {now:%b %Y}",
+        since=int(min(per_day)[:4]) if per_day else now.year,
+        year=now.year,
         commits=len(commits),
         added=sum(c.added for c in commits),
         deleted=sum(c.deleted for c in commits),
-        commits_year=len(recent),
-        added_year=sum(c.added for c in recent),
-        deleted_year=sum(c.deleted for c in recent),
+        commits_this_year=sum(1 for c in commits if c.date.startswith(str(now.year))),
         active_days=len(per_day),
         longest_streak=_longest_streak(set(per_day)),
-        busiest_day=max(per_day.values(), default=0),
+        busiest_day=per_day[busiest] if busiest else 0,
+        busiest_date=f"{int(busiest[8:])} {date.fromisoformat(busiest):%b %Y}" if busiest else "",
         pull_requests=profile.pull_requests,
         merged_pull_requests=profile.merged_pull_requests,
-        reviews=profile.reviews,
-        issues=profile.issues,
-        monthly=monthly,
+        month=_month(commits, now.date()),
+        hours=hours,
         languages=languages,
-        language_count=len(ranked),
         top_repos=top_repos,
         owned_repos=len(owned),
         contributed_repos=len(per_repo),
