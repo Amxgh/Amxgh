@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import calendar
+import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
@@ -55,6 +56,7 @@ class Summary:
     added: int
     deleted: int
     commits_this_year: int
+    fixes: int  # commits whose subject says fix / bugfix / hotfix
     active_days: int
     longest_streak: int
     busiest_day: int
@@ -70,6 +72,9 @@ class Summary:
     stars: int
     forks: int
     organizations: int
+
+
+_FIX = re.compile(r"\b(?:bug|hot)?fix", re.IGNORECASE)
 
 
 def _longest_streak(days: set[str]) -> int:
@@ -162,6 +167,7 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
         added=sum(c.added for c in commits),
         deleted=sum(c.deleted for c in commits),
         commits_this_year=sum(1 for c in commits if c.date.startswith(str(now.year))),
+        fixes=sum(1 for c in commits if _FIX.search(c.subject)),
         active_days=len(per_day),
         longest_streak=_longest_streak(set(per_day)),
         busiest_day=per_day[busiest] if busiest else 0,
