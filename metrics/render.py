@@ -1,8 +1,8 @@
 """Renders the summary as an SVG card, one file per color scheme.
 
 The numbers are printed; the commentary is scribbled on top in a handwriting font,
-with pen arrows and circles. What the scribbles say lives in notes.py; this module
-decides where they go, skipping any line that wouldn't fit its spot.
+with pen arrows and circles. What the scribbles say lives in scribbles.toml (read by
+notes.py); this module decides where they go, skipping any line that wouldn't fit.
 """
 
 from __future__ import annotations
@@ -489,7 +489,7 @@ def render(s: Summary, theme: str) -> str:
     y = max(left_end, right_end) + 30
     out.append(_pencil_line(y, "bottom"))
     y += 24
-    out.append(_text(P, y, esc(notes.pick("footer", notes.FOOTERS)), "foot"))
+    out.append(_text(P, y, esc(notes.pick("footer", notes.footer()) or ""), "foot"))
     out.append(_text(W - P, y, f"updated {s.updated}", "foot", "end"))
     h = y + 22
 
