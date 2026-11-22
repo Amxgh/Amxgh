@@ -10,6 +10,7 @@ from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from .config import Config
+from .fuel import Fuel, Tally, fuel, tally
 from .gitstats import Commit
 from .github import Profile, Repo
 
@@ -28,6 +29,7 @@ class RepoRow:
 class Month:
     """The current calendar month, day by day, up to today."""
     name: str  # "November"
+    key: str  # "2026-11"
     today: int  # day of the month
     days: list[int]  # commits per day, one entry for every day of the month
     added: int
@@ -74,6 +76,10 @@ class Summary:
     stars: int
     forks: int
     organizations: int
+    fuel: dict[str, Fuel]  # each coding day's drinks, by ISO date
+    month_fuel: Tally
+    yesterday: str  # ISO date, for "what did i do yesterday" notes
+    night_share: float  # share of all commits made after sunset
 
 
 _FIX = re.compile(r"\b(?:bug|hot)?fix", re.IGNORECASE)
@@ -102,6 +108,7 @@ def _month(commits: list[Commit], today: date) -> Month:
     earlier = [n for m, n in per_month.items() if m < key]
     return Month(
         name=f"{today:%B}",
+        key=key,
         today=today.day,
         days=days,
         added=sum(c.added for c in this),
@@ -160,6 +167,10 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
     mine = owned | {k: repos[k] for k in per_repo if k in repos and not repos[k].fork}
     orgs = {repos[k].owner.lower() for k in per_repo if k in repos and repos[k].owner_is_org}
 
+    tz = ZoneInfo(cfg.timezone)
+    drinks = fuel(commits, tz, cfg.location)
+    night = sum(f.night_commits for f in drinks.values())
+
     return Summary(
         name=profile.name,
         login=profile.login,
@@ -187,4 +198,8 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
         stars=sum(r.stars for r in mine.values()),
         forks=sum(r.forks for r in mine.values()),
         organizations=len(orgs),
+        fuel=drinks,
+        month_fuel=tally(drinks, f"{now:%Y-%m}"),
+        yesterday=(now.date() - timedelta(days=1)).isoformat(),
+        night_share=night / len(commits) if commits else 0.0,
     )

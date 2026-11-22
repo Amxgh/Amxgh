@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import os
 import random
-from datetime import date
+from datetime import date, timedelta
 
 from .fmt import compact, hour, ordinal, plural
 from .stats import Month, Summary
@@ -61,7 +61,19 @@ def hero(s: Summary) -> list[tuple[str, ...]]:
         ("a few of them", "were on purpose"),
         ("my keyboard", "has seen things"),
         ("and i'd do it", "all again"),
+        ("fueled by lattes,", "red bull zero and heineken"),
+        ("headphones on.", "music off. locked in."),
+        ("the easy ones were", "written to kiss land"),
+        ("each one worth", "a cold heineken"),
+        ("hold my beer",),
+        ("never once mixed", "caffeine and beer"),
+        ("iced sf vanilla", "protein latte. always."),
+        ("4 sf vanilla, 4 sf caramel,", "3 long shots"),
     ]
+    if s.night_share >= 0.25:
+        pct = round(100 * s.night_share)
+        out += [(f"{pct}% of them after sunset,", "from bed"),
+                (f"{pct}% written in bed.", "the rest on campus")]
     if s.active_days:
         out.append((f"{s.active_days:,} days of this.", "and counting"))
         per_day = n / s.active_days
@@ -98,7 +110,8 @@ def month(m: Month) -> list[str]:
     left = len(m.days) - m.today
     if not n:
         out = ["nothing yet. thinking very hard.", "blank page. full potential.",
-               f"day {m.today}. the keyboard is warming up.", "stretching. hydrating. soon."]
+               f"day {m.today}. the keyboard is warming up.", "stretching. hydrating. soon.",
+               "laundry. meal prep. a new show. soon.", "movie marathon first. commits later."]
         if p:
             out += [f"{prev} had {p:,}. recovering.", f"{prev} had {p:,}. resting my fingers.",
                     f"{prev}: {p:,}. {name}: loading..."]
@@ -110,19 +123,21 @@ def month(m: Month) -> list[str]:
                f"biggest month yet. {left} {plural(left, 'day')} to go.",
                "all-time record. my keyboard filed a complaint.",
                "record month. sleep has been postponed.",
-               f"best month ever. {name} is unwell."]
+               f"best month ever. {name} is unwell.",
+               "record month. red bull zero stocks are low."]
         if p:
-            out.append(f"{prev} had {p:,}. {name} said hold my coffee.")
+            out.append(f"{prev} had {p:,}. {name} said hold my beer.")
         return out
     if m.record:
         return ["my biggest month ever.", "record month. time for a nap.",
-                f"new record. {name}, you were a lot."]
+                f"new record. {name}, you were a lot.", "record month. heineken time."]
     if p > n:
         return [f"{prev} had {p:,}. catching up.",
                 f"{p - n:,} behind {prev}. the comeback starts now.",
                 f"{prev} set the bar at {p:,}. working on it.",
                 f"quiet one so far. {prev} was {p:,}.",
-                f"{prev}: {p:,}. {name}: pacing myself. allegedly."]
+                f"{prev}: {p:,}. {name}: pacing myself. allegedly.",
+                f"{prev}: {p:,}. {name}: gym, laundry, a new show."]
     if p:
         return [f"already beat {prev} ({p:,}).", f"{prev} had {p:,}. we're past that.",
                 f"{n - p:,} ahead of {prev}. smooth.", f"sorry {prev}, you've been lapped."]
@@ -138,10 +153,23 @@ def best_day(m: Month, s: Summary) -> list[str]:
     d = ordinal(m.best_day)
     v = m.days[m.best_day - 1]
     out = [f"the {d}. long day.", f"the {d}. no comment.", f"the {d}. a blur.",
-           f"the {d}. in the zone.", f"the {d}. coffee: yes.", f"the {d}. deadline?",
+           f"the {d}. in the zone.", f"the {d}. deadline?",
            f"the {d}. good times.", f"{v} on the {d}. hm.", f"the {d}. what a day."]
     if v == s.busiest_day:
         out += [f"the {d}. all-time record.", f"the {d}. a new record."]
+    if f := s.fuel.get(f"{m.key}-{m.best_day:02}"):
+        if f.weekend:
+            out += [f"the {d}. weekend. {f.brand}.", f"the {d}. zero caffeine."]
+        if f.latte:
+            out.append(f"the {d}. latte: yes.")
+        if f.red_bulls == 2:
+            out += [f"the {d}. 2 red bulls.", f"the {d}. two cans deep."]
+        elif f.red_bulls and f.latte:
+            out.append(f"the {d}. latte + red bull.")
+        elif f.red_bulls:
+            out.append(f"the {d}. red bull zero.")
+        if f.beer == "done":
+            out += [f"the {d}. then {f.brand}.", f"the {d}. done. {f.brand}."]
     return out
 
 
@@ -173,24 +201,92 @@ def busiest(s: Summary) -> list[str]:
         return []
     return ["i'm fine.", "i'm fine. really.", "my keyboard remembers.", "don't ask.",
             "never again. (lie)", "deadline energy.", "it was a whole thing.", "that was a day.",
-            "hydration: zero.", "worth it. probably.", "we don't talk about it."]
+            "hydration: zero.", "worth it. probably.", "we don't talk about it.",
+            "hold my beer.", "two red bull zeros deep.", "headphones on. music off.",
+            "then one cold heineken."]
+
+
+# ---- Under the facts: what I was drinking, from when the commits happened ----
+
+def _when(key: str, s: Summary) -> tuple[str, str]:
+    """How to say that coding day, for daytime and for nighttime."""
+    today = (date.fromisoformat(s.yesterday) + timedelta(days=1)).isoformat()
+    if key == today:
+        return "today", "tonight"
+    if key == s.yesterday:
+        return "yesterday", "last night"
+    day = date.fromisoformat(key).strftime("%A").lower()
+    return day, f"{day} night"
+
+
+def fuel(s: Summary) -> list[str]:
+    if not s.fuel:
+        return []
+    out = []
+    key, f = list(s.fuel.items())[-1]
+    recent = (date.fromisoformat(s.yesterday) - date.fromisoformat(key)).days < 6
+    day, night = _when(key, s)
+    beer = f.brand
+    if recent and f.weekend:
+        out += [f"{day}: {beer}. no caffeine on weekends.", f"{day}: weekend, so {beer}. that's the rule.",
+                f"{night}: {beer}, a few commits, no caffeine."]
+    elif recent:
+        if f.latte:
+            out += [f"{day}: one iced venti latte. never two.",
+                    f"{day}: on campus, iced latte in hand.",
+                    f"{day}: venti latte. 3 long shots. 8 pumps.",
+                    f"{day}: 4 vanilla, 4 caramel, all sugar free.",
+                    f"{day}: iced venti sugar free vanilla protein latte.",
+                    f"{day}: the usual. iced sf vanilla protein latte.",
+                    "+4 sf caramel, +4 sf vanilla, 3 long shots. always."]
+        if f.red_bulls == 2:
+            out += [f"{night}: two red bull zeros. stuff got built.",
+                    f"{night}: 2 red bull zeros, {f.night_commits} commits, from bed."]
+        elif f.red_bulls:
+            out += [f"{night}: red bull zero. building mode.",
+                    f"{night}: red bull zero + {f.night_commits} commits from bed."]
+        if f.beer == "done":
+            out += [f"{night}: worked till it was done. then {beer}.",
+                    f"{day}: finished it. caffeine out, {beer} in.",
+                    f"{night}: shipped. cracked open a cold {beer}."]
+        elif f.beer == "fixing":
+            out += [f"{night}: bug fixes and a cold {beer}.",
+                    f"{night}: {beer} night. fixing and maintaining.",
+                    f"{night}: maintenance mode, {beer} in hand, in bed."]
+    if (y := s.fuel.get(s.yesterday)) and y.commits:
+        out += ["committed yesterday, so: gym.", "work done ahead of schedule. gym earned."]
+    elif s.yesterday not in s.fuel:
+        out += ["yesterday: laundry, meal prep, a new show.", "no commits yesterday. movie marathon.",
+                "yesterday: friends, chores, zero code."]
+    t = s.month_fuel
+    if t.beers and (t.lattes or t.red_bulls):
+        out += ["caffeine and beer: never at the same time.", "red bull zero = building. beer = fixing."]
+    if t.lattes >= 3:
+        out += [f"{t.lattes} venti lattes. 3 long shots each.",
+                f"{t.lattes} iced sf vanilla protein lattes. same order every time.",
+                f"{t.lattes} lattes = {8 * t.lattes} pumps of sugar free syrup."]
+    return out
 
 
 # ---- Under the commit clock, after the busiest hour ----
 
 HOUR_QUIPS = [  # (from this hour on, quips)
     (0, ["who needs sleep", "sleep is a suggestion", "the bugs come out at night", "owl mode: on",
-         "night shift, unpaid", "it's quiet. too quiet"]),
+         "night shift, unpaid", "it's quiet. too quiet", "coding from bed",
+         "red bull zero hours", "laptop in bed, headphones on"]),
     (5, ["up before the bugs", "early bird gets the merge", "before the coffee kicks in",
-         "the world is quiet. good", "sunrise commits"]),
-    (9, ["coffee-powered", "peak caffeine", "brain fully booted", "second coffee territory",
-         "morning brain, best brain"]),
+         "the world is quiet. good", "sunrise commits", "latte hasn't happened yet"]),
+    (9, ["coffee-powered", "peak caffeine", "brain fully booted", "morning brain, best brain",
+         "iced venti in hand", "on campus, 3 long shots in",
+         "protein latte in hand"]),
     (13, ["like a normal person", "post-lunch focus", "office hours", "suspiciously reasonable",
-          "a functioning adult, apparently"]),
+          "a functioning adult, apparently", "on campus, latte in hand",
+          "latte #1. also the last one"]),
     (18, ["after-dinner shift", "dinner, then deploy", "the second shift", "prime time",
-          "evening debugging hours"]),
+          "evening debugging hours", "sunset. latte's worn off", "gym done. back to it"]),
     (22, ["sleep is a suggestion", "night owl hours", "one more commit, then bed",
-          "bedtime is a social construct", "just one more fix"]),
+          "bedtime is a social construct", "just one more fix", "in bed. laptop on lap",
+          "one more commit, then heineken"]),
 ]
 
 
@@ -211,7 +307,7 @@ def languages(langs: list[tuple[str, int]]) -> list[str]:
         return [f"mostly {top}. sorry, {second}.", f"{top} is doing the heavy lifting",
                 f"{top} gang.", f"{round(100 * share)}% {top}. no regrets.",
                 f"it's {top} all the way down", f"{second} is the side quest",
-                f"{top} main, {second} alt", f"{top}, obviously."]
+                f"{top} main, {second} alt", f"{top}, obviously.", "slowly moving it all to neovim"]
     if share >= 0.5:
         return [f"just {top}, really.", f"{top} and nothing else", f"loyal to {top}"]
     return ["a bit of everything.", "polyglot, allegedly.", "can't commit to just one. ironic.",
@@ -221,15 +317,15 @@ def languages(langs: list[tuple[str, int]]) -> list[str]:
 # ---- Beside one of the other languages in the list ----
 
 LANGUAGE_QUIPS = {
-    "Python": ["indentation enjoyer", "import antigravity", "whitespace matters", "pip install everything"],
-    "Java": ["public static void quirky()", "AbstractQuipFactoryBean", "write once, debug everywhere",
+    "Python": ["pycharm. for now.", "indentation enjoyer", "import antigravity", "whitespace matters", "pip install everything"],
+    "Java": ["intellij. for now.", "public static void quirky()", "AbstractQuipFactoryBean", "write once, debug everywhere",
              "verbose, but loyal"],
-    "JavaScript": ["[] + {} = ?", "undefined is not a function", "it works. don't ask why.", "NaN !== NaN"],
-    "TypeScript": ["javascript in a suit", "any, any, any", "types: mostly vibes"],
+    "JavaScript": ["intellij, until neovim wins", "[] + {} = ?", "undefined is not a function", "it works. don't ask why.", "NaN !== NaN"],
+    "TypeScript": ["intellij, until neovim wins", "javascript in a suit", "any, any, any", "types: mostly vibes"],
     "CSS": ["centered a div once", "!important", "looked fine locally"],
     "HTML": ["a programming language. fight me.", "<div><div><div>"],
-    "Lua": ["arrays start at 1 here", "tables all the way down"],
-    "C": ["segfault (core dumped)", "malloc and pray"],
+    "Lua": ["it's my neovim config", "init.lua and friends", "for neovim. only neovim."],
+    "C": ["segfault (core dumped)", "malloc and pray", "neovim, in wsl"],
     "C++": ["400-line template errors", "undefined behavior enjoyer"],
     "C#": ["java with better manners"],
     "Rust": ["fighting the borrow checker", "blazingly fast (tm)"],
@@ -267,7 +363,8 @@ def language_row(name: str, share: float, hidden: int) -> list[str]:
 
 def repos(s: Summary) -> list[str]:
     out = ["naming things is still the hardest part", "every repo starts as 'just a quick script'",
-           "readme coming soon (since forever)", "todo: finish the side projects"]
+           "readme coming soon (since forever)", "todo: finish the side projects",
+           "started on campus, finished in bed", "the good ones ended with a heineken"]
     if s.top_repos and s.commits:
         top = s.top_repos[0]
         share = round(100 * top.commits / s.commits)
@@ -305,4 +402,5 @@ FOOTERS = [
     "recounted nightly from git log while i (supposedly) sleep.",
     "fresh from git log. merges, lockfiles and vendored code not invited.",
     "numbers straight from git history, recounted every night.",
+    "recounted at 1am from git log. i'm probably still up.",
 ]

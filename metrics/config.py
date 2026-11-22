@@ -8,6 +8,7 @@ from pathlib import Path
 @dataclass
 class Config:
     timezone: str = "UTC"
+    location: tuple[float, float] | None = None  # (latitude, longitude), for sunset
     output_dir: str = "assets"
     cache_dir: str = ".cache/repos"
     show_private_names: bool = False
@@ -30,6 +31,7 @@ class Config:
         d = cls()
         return cls(
             timezone=get("profile", "timezone", d.timezone),
+            location=tuple(get("profile", "location", ())) or None,
             output_dir=get("profile", "output_dir", d.output_dir),
             cache_dir=get("profile", "cache_dir", d.cache_dir),
             show_private_names=get("privacy", "show_private_repo_names", d.show_private_names),
