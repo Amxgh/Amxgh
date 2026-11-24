@@ -9,6 +9,7 @@ on:
     paths:
       - "metrics/**"
       - "metrics.toml"
+      - "scribbles.toml"
       - ".github/workflows/main.yml"
 
 permissions:
