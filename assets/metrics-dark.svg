@@ -29,15 +29,15 @@
     </style>
 <rect x="0.5" y="0.5" width="839" height="761" rx="6" fill="#0d1117" stroke="#30363d"/>
 <text x="28.0" y="46.0" class="title">Amogh<tspan class="handle" dx="10">@Amxgh</tspan></text>
-<text x="25.0" y="132.0" class="hero">1,925</text>
+<text x="25.0" y="132.0" class="hero">1,937</text>
 <text x="28.0" y="158.0" class="lead">commits since 2021</text>
-<g transform="rotate(-5.42 201.0 100)"><text x="201.0" y="100.0" class="hand">hold my beer</text></g>
-<path d="M217.0,109.0 Q196.8,135.1 168.4,152.0 M172.4,145.7 L168.4,152.0 L175.9,151.3" class="ink"/>
-<text x="28.0" y="194.0" class="body"><tspan class="mono add">+138K</tspan><tspan class="mono del" dx="8">−44.3K</tspan><tspan dx="8">lines</tspan></text>
-<text x="28.0" y="216.0" class="body"><tspan class="em">1,253</tspan> so far in 2026</text>
-<text x="28.0" y="238.0" class="body"><tspan class="em">223</tspan> days with a commit, 8 in a row at best</text>
+<g transform="rotate(-4.60 201.0 100)"><text x="201.0" y="100.0" class="hand">278 of them</text><text x="209.0" y="122.0" class="hand">fix the other 1,659</text></g>
+<path d="M217.0,131.0 Q197.8,153.4 168.4,152.0 M174.6,147.8 L168.4,152.0 L175.2,155.2" class="ink"/>
+<text x="28.0" y="194.0" class="body"><tspan class="mono add">+139K</tspan><tspan class="mono del" dx="8">−44.3K</tspan><tspan dx="8">lines</tspan></text>
+<text x="28.0" y="216.0" class="body"><tspan class="em">1,265</tspan> so far in 2026</text>
+<text x="28.0" y="238.0" class="body"><tspan class="em">224</tspan> days with a commit, 8 in a row at best</text>
 <text x="408.0" y="84.0" class="h">november so far</text>
-<text x="408.0" y="120.0" class="big">482<tspan class="body" dx="8">commits on 14 of 23 days</tspan></text>
+<text x="408.0" y="120.0" class="big">494<tspan class="body" dx="8">commits on 15 of 24 days</tspan></text>
 <rect x="410.0" y="192" width="9.5" height="2" class="tick"/>
 <rect x="423.5" y="192" width="9.5" height="2" class="tick"/>
 <rect x="436.9" y="192" width="9.5" height="2" class="tick"/>
@@ -62,28 +62,28 @@
 <path d="M679.33,194.00V190.71A2.00,2.00 0 0 1 681.33,188.71H686.80A2.00,2.00 0 0 1 688.80,190.71V194.00Z" class="bar"/>
 <path d="M692.80,194.00V193.00A2.00,2.00 0 0 1 694.80,191.00H700.27A2.00,2.00 0 0 1 702.27,193.00V194.00Z" class="bar"/>
 <rect x="706.3" y="192" width="9.5" height="2" class="tick"/>
-<circle cx="724.5" cy="192.5" r="1.5" class="tick"/>
+<path d="M719.73,194.00V190.71A2.00,2.00 0 0 1 721.73,188.71H727.20A2.00,2.00 0 0 1 729.20,190.71V194.00Z" class="bar"/>
 <circle cx="737.9" cy="192.5" r="1.5" class="tick"/>
 <circle cx="751.4" cy="192.5" r="1.5" class="tick"/>
 <circle cx="764.9" cy="192.5" r="1.5" class="tick"/>
 <circle cx="778.3" cy="192.5" r="1.5" class="tick"/>
 <circle cx="791.8" cy="192.5" r="1.5" class="tick"/>
 <circle cx="805.3" cy="192.5" r="1.5" class="tick"/>
-<text x="576.1" y="157.0" class="hand">118 on the 11th. hm.</text>
-<path d="M572.1,151.0 Q566.3,145.1 558.1,146.0 M563.5,142.1 L558.1,146.0 L564.3,148.7" class="ink"/>
+<text x="576.1" y="157.0" class="hand">the 11th. a new record.</text>
+<path d="M572.1,151.0 Q566.1,145.8 558.1,146.0 M564.3,143.3 L558.1,146.0 L564.5,148.0" class="ink"/>
 <text x="410.0" y="210.0" class="axis">1</text>
 <text x="810.0" y="210.0" class="axis" text-anchor="end">30</text>
-<text x="711.0" y="210.0" class="axis hi" text-anchor="middle">today</text>
-<text x="408.0" y="236.0" class="body"><tspan class="mono add">+51.3K</tspan><tspan class="mono del" dx="8">−17K</tspan><tspan dx="8">lines this month</tspan></text>
-<g transform="rotate(-2.26 412.0 264.0)"><text x="412.0" y="264.0" class="hand">all-time record.</text></g>
-<path d="M28.0,291.8 C43.5,291.7 87.0,291.3 120.8,291.3 C154.6,291.3 197.6,291.4 230.8,291.6 C264.1,291.8 288.9,292.4 320.2,292.5 C351.5,292.7 387.2,292.7 418.8,292.6 C450.5,292.4 476.6,291.7 510.0,291.7 C543.5,291.7 585.4,292.4 619.6,292.5 C653.8,292.5 683.3,292.1 715.3,292.0 C747.4,292.0 795.9,292.0 812.0,292.0" class="pencil"/>
-<text x="28.0" y="342.0" class="body"><tspan class="em">158</tspan> pull requests opened, <tspan class="em">155</tspan> merged<tspan class="hand" dx="10">3 got away</tspan></text>
-<text x="28.0" y="366.0" class="body"><tspan class="em">118</tspan> commits in a single day (11 Nov 2026)<tspan class="hand" dx="10">two red bull zeros deep.</tspan></text>
-<text x="28.0" y="390.0" class="body"><tspan class="em">5</tspan> lattes, <tspan class="em">8</tspan> red bull zeros, <tspan class="em">8</tspan> beers this month</text>
-<g transform="rotate(-0.78 34.0 420.0)"><text x="34.0" y="420.0" class="hand">committed yesterday, so: gym.</text></g>
+<text x="724.5" y="210.0" class="axis hi" text-anchor="middle">today</text>
+<text x="408.0" y="236.0" class="body"><tspan class="mono add">+52.3K</tspan><tspan class="mono del" dx="8">−17K</tspan><tspan dx="8">lines this month</tspan></text>
+<g transform="rotate(-1.03 412.0 264.0)"><text x="412.0" y="264.0" class="hand">personal record, and it&#x27;s only the 24th</text></g>
+<path d="M28.0,291.9 C45.3,291.9 99.9,292.0 131.7,292.1 C163.4,292.3 187.4,292.9 218.7,292.9 C250.0,292.9 286.5,292.2 319.5,292.1 C352.4,292.1 384.5,292.7 416.5,292.6 C448.5,292.6 478.5,291.7 511.6,291.8 C544.7,291.9 581.9,292.8 615.1,293.0 C648.2,293.1 677.6,292.8 710.4,292.7 C743.3,292.5 795.1,291.9 812.0,291.8" class="pencil"/>
+<text x="28.0" y="342.0" class="body"><tspan class="em">160</tspan> pull requests opened, <tspan class="em">157</tspan> merged<tspan class="hand" dx="10">3 still out there somewhere</tspan></text>
+<text x="28.0" y="366.0" class="body"><tspan class="em">118</tspan> commits in a single day (11 Nov 2026)<tspan class="hand" dx="10">don&#x27;t ask.</tspan></text>
+<text x="28.0" y="390.0" class="body"><tspan class="em">5</tspan> lattes, <tspan class="em">9</tspan> red bull zeros, <tspan class="em">8</tspan> beers this month</text>
+<g transform="rotate(-0.44 34.0 420.0)"><text x="34.0" y="420.0" class="hand">work done ahead of schedule. gym earned.</text></g>
 <text x="548.0" y="328.0" class="h">when I commit</text>
-<path d="M549.50,376.00V361.29A2.00,2.00 0 0 1 551.50,359.29H555.50A2.00,2.00 0 0 1 557.50,361.29V376.00Z" class="bar"/>
-<path d="M560.50,376.00V353.39A2.00,2.00 0 0 1 562.50,351.39H566.50A2.00,2.00 0 0 1 568.50,353.39V376.00Z" class="bar"/>
+<path d="M549.50,376.00V360.75A2.00,2.00 0 0 1 551.50,358.75H555.50A2.00,2.00 0 0 1 557.50,360.75V376.00Z" class="bar"/>
+<path d="M560.50,376.00V351.77A2.00,2.00 0 0 1 562.50,349.77H566.50A2.00,2.00 0 0 1 568.50,351.77V376.00Z" class="bar"/>
 <path d="M571.50,376.00V352.85A2.00,2.00 0 0 1 573.50,350.85H577.50A2.00,2.00 0 0 1 579.50,352.85V376.00Z" class="bar"/>
 <path d="M582.50,376.00V367.04A2.00,2.00 0 0 1 584.50,365.04H588.50A2.00,2.00 0 0 1 590.50,367.04V376.00Z" class="bar"/>
 <path d="M593.50,376.00V363.99A2.00,2.00 0 0 1 595.50,361.99H599.50A2.00,2.00 0 0 1 601.50,363.99V376.00Z" class="bar"/>
@@ -106,17 +106,17 @@
 <path d="M780.50,376.00V357.70A2.00,2.00 0 0 1 782.50,355.70H786.50A2.00,2.00 0 0 1 788.50,357.70V376.00Z" class="bar"/>
 <path d="M791.50,376.00V364.71A2.00,2.00 0 0 1 793.50,362.71H797.50A2.00,2.00 0 0 1 799.50,364.71V376.00Z" class="bar"/>
 <path d="M802.50,376.00V358.78A2.00,2.00 0 0 1 804.50,356.78H808.50A2.00,2.00 0 0 1 810.50,358.78V376.00Z" class="bar"/>
-<path d="M773.8,341.6 C774.3,341.9 775.7,342.6 776.6,343.5 C777.5,344.4 778.3,345.6 779.1,346.9 C779.9,348.1 780.7,349.5 781.4,351.1 C782.0,352.6 782.6,354.4 783.0,356.1 C783.4,357.9 783.6,359.8 783.8,361.6 C783.9,363.5 784.1,365.4 784.0,367.1 C783.9,368.9 783.6,370.6 783.3,372.2 C783.0,373.7 782.5,375.2 781.9,376.4 C781.3,377.6 780.6,378.4 779.8,379.3 C779.1,380.2 778.4,381.5 777.5,381.9 C776.6,382.2 775.5,381.6 774.5,381.4 C773.5,381.2 772.5,381.3 771.6,380.8 C770.6,380.2 769.5,379.3 768.6,378.1 C767.7,377.0 766.9,375.4 766.1,373.9 C765.4,372.3 764.6,370.7 764.0,368.9 C763.5,367.1 763.0,365.0 762.8,363.1 C762.5,361.2 762.5,359.2 762.5,357.3 C762.6,355.4 762.7,353.5 762.9,351.8 C763.1,350.0 763.3,348.1 763.7,346.6 C764.2,345.0 764.8,343.6 765.6,342.5 C766.3,341.4 767.1,340.4 768.0,339.8 C768.9,339.2 769.9,338.8 770.9,338.8 C771.9,338.8 773.0,339.3 774.0,339.8 C775.1,340.3 776.2,340.8 777.1,341.8 C778.1,342.8 779.0,344.3 779.9,345.7 C780.8,347.1 782.1,349.3 782.5,350.1" class="ink"/>
+<path d="M767.6,343.1 C768.0,342.9 769.2,342.3 770.1,341.9 C770.9,341.6 771.7,341.0 772.6,340.9 C773.4,340.8 774.4,340.7 775.3,341.2 C776.1,341.7 776.9,343.0 777.8,344.0 C778.6,344.9 779.5,345.7 780.2,346.9 C780.9,348.1 781.5,349.8 782.0,351.4 C782.4,353.0 782.7,354.8 783.1,356.5 C783.4,358.2 783.8,360.0 784.0,361.7 C784.1,363.5 784.2,365.5 784.0,367.2 C783.9,368.9 783.5,370.5 783.1,372.0 C782.7,373.6 782.3,375.2 781.8,376.5 C781.2,377.9 780.5,379.0 779.8,379.9 C779.0,380.9 778.2,381.8 777.3,382.1 C776.5,382.5 775.5,382.1 774.5,382.1 C773.6,382.1 772.6,382.7 771.6,382.2 C770.7,381.7 769.9,380.1 769.0,379.1 C768.1,378.1 767.2,377.3 766.4,376.1 C765.6,374.8 764.8,373.3 764.2,371.6 C763.7,369.9 763.5,367.8 763.3,365.9 C763.0,364.0 762.7,362.2 762.5,360.3 C762.4,358.4 762.4,356.5 762.5,354.6 C762.6,352.8 762.8,350.9 763.2,349.2 C763.5,347.5 764.0,345.9 764.7,344.6 C765.3,343.2 766.1,342.2 766.9,341.2 C767.7,340.2 768.5,339.1 769.4,338.6 C770.3,338.2 771.9,338.5 772.4,338.4" class="ink"/>
 <text x="549.5" y="391.0" class="axis">midnight</text>
 <text x="615.5" y="391.0" class="axis">6am</text>
 <text x="681.5" y="391.0" class="axis">noon</text>
-<text x="574.0" y="422.0" class="hand">8 pm. sunset. latte&#x27;s worn off.</text>
-<path d="M757.5,405.0 Q769.0,400.2 774.5,389.0 M775.5,396.4 L774.5,389.0 L768.2,393.0" class="ink"/>
+<text x="676.9" y="422.0" class="hand">8 pm. prime time.</text>
+<path d="M757.5,405.0 Q769.2,400.4 774.5,389.0 M775.8,396.4 L774.5,389.0 L769.5,394.6" class="ink"/>
 <text x="28.0" y="468.0" class="h">most active repos</text>
 <text x="286.0" y="468.0" class="axis" text-anchor="end">commits</text>
 <text x="398.0" y="468.0" class="axis" text-anchor="end">lines</text>
 <text x="28.0" y="496.0" class="name">MiscGuild/discord<tspan class="faint">  ★ 16</tspan></text>
-<text x="286.0" y="496.0" class="mono-strong" text-anchor="end">800</text>
+<text x="286.0" y="496.0" class="mono-strong" text-anchor="end">803</text>
 <text x="398.0" y="496.0" class="mono" text-anchor="end"><tspan class="add">+21.6K</tspan><tspan class="del" dx="6">−17.2K</tspan></text>
 <text x="28.0" y="526.0" class="name">Private · Python</text>
 <text x="286.0" y="526.0" class="mono-strong" text-anchor="end">292</text>
@@ -130,31 +130,31 @@
 <text x="28.0" y="616.0" class="name">Private · Python</text>
 <text x="286.0" y="616.0" class="mono-strong" text-anchor="end">103</text>
 <text x="398.0" y="616.0" class="mono" text-anchor="end"><tspan class="add">+17.4K</tspan><tspan class="del" dx="6">−2,920</tspan></text>
-<text x="28.0" y="652.0" class="body"><tspan class="em">32</tspan> of my own<tspan class="em" dx="18">33</tspan> committed to<tspan class="em" dx="18">78</tspan> stars<tspan class="em" dx="18">35</tspan> forks<tspan class="em" dx="18">3</tspan> orgs</text>
-<g transform="rotate(-2.66 34.0 686.0)"><text x="34.0" y="686.0" class="hand">78 stars. each one framed on my wall.</text></g>
+<text x="28.0" y="652.0" class="body"><tspan class="em">33</tspan> of my own<tspan class="em" dx="18">34</tspan> committed to<tspan class="em" dx="18">78</tspan> stars<tspan class="em" dx="18">35</tspan> forks<tspan class="em" dx="18">3</tspan> orgs</text>
+<g transform="rotate(-2.29 34.0 686.0)"><text x="34.0" y="686.0" class="hand">the private ones are the good ones. allegedly.</text></g>
 <text x="442.0" y="468.0" class="h">languages</text>
 <clipPath id="lang-bar"><rect x="442.0" y="482" width="370.0" height="8" rx="2"/></clipPath>
 <g clip-path="url(#lang-bar)">
-<rect x="442.00" y="482" width="255.81" height="8" fill="#3572A5"/>
-<rect x="699.81" y="482" width="66.29" height="8" fill="#b07219"/>
-<rect x="768.10" y="482" width="13.81" height="8" fill="#f1e05a"/>
-<rect x="783.90" y="482" width="6.21" height="8" fill="#e34c26"/>
-<rect x="792.12" y="482" width="5.24" height="8" fill="#ab8fc7"/>
-<rect x="799.36" y="482" width="5.01" height="8" fill="#3178c6"/>
-<rect x="806.37" y="482" width="5.63" height="8" fill="#3d444d"/>
+<rect x="442.00" y="482" width="254.27" height="8" fill="#3572A5"/>
+<rect x="698.27" y="482" width="65.88" height="8" fill="#b07219"/>
+<rect x="766.15" y="482" width="13.73" height="8" fill="#f1e05a"/>
+<rect x="781.87" y="482" width="6.18" height="8" fill="#e34c26"/>
+<rect x="790.05" y="482" width="5.21" height="8" fill="#ab8fc7"/>
+<rect x="797.26" y="482" width="4.98" height="8" fill="#3178c6"/>
+<rect x="804.24" y="482" width="7.76" height="8" fill="#3d444d"/>
 </g>
 <rect x="442.0" y="509" width="8" height="8" rx="2" fill="#3572A5"/>
 <text x="460.0" y="518.0" class="name">Python</text>
 <text x="752.0" y="518.0" class="mono" text-anchor="end">85.1K</text>
-<text x="812.0" y="518.0" class="mono-strong" text-anchor="end">71.5%</text>
+<text x="812.0" y="518.0" class="mono-strong" text-anchor="end">71.0%</text>
 <rect x="442.0" y="535" width="8" height="8" rx="2" fill="#b07219"/>
 <text x="460.0" y="544.0" class="name">Java</text>
 <text x="752.0" y="544.0" class="mono" text-anchor="end">22K</text>
-<text x="812.0" y="544.0" class="mono-strong" text-anchor="end">18.5%</text>
+<text x="812.0" y="544.0" class="mono-strong" text-anchor="end">18.4%</text>
 <rect x="442.0" y="561" width="8" height="8" rx="2" fill="#f1e05a"/>
 <text x="460.0" y="570.0" class="name">JavaScript</text>
 <text x="752.0" y="570.0" class="mono" text-anchor="end">4,592</text>
-<text x="812.0" y="570.0" class="mono-strong" text-anchor="end">3.9%</text>
+<text x="812.0" y="570.0" class="mono-strong" text-anchor="end">3.8%</text>
 <rect x="442.0" y="587" width="8" height="8" rx="2" fill="#e34c26"/>
 <text x="460.0" y="596.0" class="name">HTML</text>
 <text x="752.0" y="596.0" class="mono" text-anchor="end">2,066</text>
@@ -169,9 +169,9 @@
 <text x="812.0" y="648.0" class="mono-strong" text-anchor="end">1.4%</text>
 <rect x="442.0" y="665" width="8" height="8" rx="2" fill="#3d444d"/>
 <text x="460.0" y="674.0" class="name">Other</text>
-<text x="752.0" y="674.0" class="mono" text-anchor="end">1,872</text>
-<text x="812.0" y="674.0" class="mono-strong" text-anchor="end">1.6%</text>
-<path d="M28.0,716.5 C44.4,716.3 93.6,716.0 126.5,715.7 C159.3,715.5 192.0,715.2 225.3,715.2 C258.6,715.2 293.3,715.6 326.3,715.9 C359.2,716.2 391.0,717.0 423.1,717.0 C455.1,717.0 485.9,716.1 518.8,715.9 C551.7,715.8 589.1,716.0 620.5,716.1 C651.8,716.2 675.1,716.5 707.0,716.5 C738.9,716.5 794.5,716.1 812.0,716.0" class="pencil"/>
-<text x="28.0" y="740.0" class="foot">numbers straight from git history, recounted every night.</text>
-<text x="812.0" y="740.0" class="foot" text-anchor="end">updated 23 Nov 2026</text>
+<text x="752.0" y="674.0" class="mono" text-anchor="end">2,597</text>
+<text x="812.0" y="674.0" class="mono-strong" text-anchor="end">2.2%</text>
+<path d="M28.0,715.9 C45.1,715.8 97.5,715.2 130.6,715.4 C163.6,715.6 195.0,716.8 226.3,716.9 C257.6,717.1 287.3,716.4 318.3,716.3 C349.4,716.3 379.5,716.8 412.5,716.8 C445.5,716.7 483.1,716.1 516.5,716.1 C550.0,716.0 580.6,716.5 613.3,716.4 C646.0,716.4 679.7,715.9 712.8,715.8 C745.9,715.8 795.5,716.0 812.0,716.0" class="pencil"/>
+<text x="28.0" y="740.0" class="foot">counted from every branch of every repo, not just the green squares.</text>
+<text x="812.0" y="740.0" class="foot" text-anchor="end">updated 24 Nov 2026</text>
 </svg>
