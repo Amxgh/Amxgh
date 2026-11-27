@@ -389,8 +389,9 @@ def render(s: Summary, theme: str) -> str:
         line = _span(f"{busiest:,}", "em") + tail
         facts.append(line + aside("busiest", f"{busiest:,}{tail}", notes.busiest(s)))
     t = s.month_fuel
-    if drinks := [(n, word) for n, word in ((t.lattes, "latte"), (t.red_bulls, "red bull zero"),
-                                            (t.beers, "beer")) if n]:
+    drinks = [(n, word) for n, word in ((t.lattes, "latte"), (t.red_bulls, "red bull zero"),
+                                        (t.beers, "beer")) if n] if s.show_fuel else []
+    if drinks:
         facts.append(", ".join(_span(f"{n:,}", "em") + f" {plural(n, word)}" for n, word in drinks)
                      + " this month")
     fy = y + 14 if len(facts) > 1 else y + 26
@@ -398,7 +399,8 @@ def render(s: Summary, theme: str) -> str:
         out.append(_text(P, fy, f, "body"))
         fy += 24
     bottom = fy - 24
-    if note := notes.pick("fuel", notes.fuel(s), lambda t: _hand_width(t) <= room_end - P - 12):
+    fuel_notes = notes.fuel(s) if s.show_fuel else []
+    if note := notes.pick("fuel", fuel_notes, lambda t: _hand_width(t) <= room_end - P - 12):
         bottom += 30
         out.append(_hand(P + 6, bottom, note, tilt=_tilt("fuel", -1.2, 1.0)))
     if clock:

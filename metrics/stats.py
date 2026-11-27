@@ -80,6 +80,7 @@ class Summary:
     month_fuel: Tally
     yesterday: str  # ISO date, for "what did i do yesterday" notes
     night_share: float  # share of all commits made after sunset
+    show_fuel: bool = True  # the "N lattes ... this month" line and its scribble
 
 
 _FIX = re.compile(r"\b(?:bug|hot)?fix", re.IGNORECASE)
@@ -202,4 +203,5 @@ def summarize(profile: Profile, commits: list[Commit], cfg: Config) -> Summary:
         month_fuel=tally(drinks, f"{now:%Y-%m}"),
         yesterday=(now.date() - timedelta(days=1)).isoformat(),
         night_share=night / len(commits) if commits else 0.0,
+        show_fuel=cfg.show_fuel,
     )
