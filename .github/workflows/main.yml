@@ -2,15 +2,10 @@ name: Metrics
 
 on:
   schedule:
-    - cron: "0 6 * * *" # daily
-  workflow_dispatch:
+    - cron: "0 6 * * *" # daily, so date-based lines stay current on days without pushes
+  workflow_dispatch: # watch.yml starts a run after you push to any repository
   push:
     branches: [main]
-    paths:
-      - "metrics/**"
-      - "metrics.toml"
-      - "scribbles.toml"
-      - ".github/workflows/main.yml"
 
 permissions:
   contents: write

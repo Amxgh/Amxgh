@@ -1,0 +1,53 @@
+name: Watch for pushes
+
+# A workflow's `push` trigger only fires for pushes to its own repository. To refresh the
+# cards after a push anywhere (personal, private, public, or organization repositories),
+# this checks your GitHub activity feed and starts the Metrics workflow whenever you've
+# pushed since its last run.
+on:
+  schedule:
+    - cron: "*/5 * * * *" # the shortest interval GitHub allows
+  workflow_dispatch:
+
+permissions:
+  actions: write # list Metrics runs and start new ones
+
+concurrency:
+  group: watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Start Metrics if you've pushed since its last run
+        env:
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          WORKFLOW: main.yml
+          REF: ${{ github.ref_name }}
+        run: |
+          # Problems here are warnings, not failures: this runs every five minutes, and a
+          # broken token already fails the daily Metrics run loudly.
+          soft_fail() { echo "::warning::$1"; exit 0; }
+
+          # Read as you (METRICS_TOKEN), the feed includes private repositories and
+          # SSO-authorized organizations. Creating or deleting a branch counts as a push.
+          login=$(GH_TOKEN=$METRICS_TOKEN gh api user --jq .login) \
+            || soft_fail "could not identify the METRICS_TOKEN user"
+          pushed=$(GH_TOKEN=$METRICS_TOKEN gh api "users/$login/events?per_page=100" --jq '
+              [.[] | select(.type == "PushEvent"
+                or ((.type == "CreateEvent" or .type == "DeleteEvent") and .payload.ref_type == "branch"))]
+              | .[0].created_at // empty') \
+            || soft_fail "could not read the activity feed for $login"
+          last=$(gh api "repos/$GH_REPO/actions/workflows/$WORKFLOW/runs?per_page=1" \
+              --jq '.workflow_runs[0].created_at // empty') \
+            || soft_fail "could not list $WORKFLOW runs"
+
+          echo "latest push: ${pushed:-none in the feed}; latest Metrics run: ${last:-never}"
+          if [[ -n "$pushed" && "$pushed" > "$last" ]]; then
+            gh workflow run "$WORKFLOW" --ref "$REF" || soft_fail "could not start $WORKFLOW"
+            echo "pushed since the last run; started $WORKFLOW"
+          fi
