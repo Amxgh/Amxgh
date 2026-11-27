@@ -33,3 +33,4 @@ exclude_commits = [] # commit SHAs (prefixes are fine) to leave out of line coun
 [display]
 top_repos = 5
 top_languages = 6
+show_fuel = false   # the "N lattes, N red bull zeros, N beers this month" line and its scribble
